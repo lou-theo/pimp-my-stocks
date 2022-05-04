@@ -1,0 +1,28 @@
+{
+  "root": "apps/pimp-my-stocks-e2e",
+  "sourceRoot": "apps/pimp-my-stocks-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nrwl/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/pimp-my-stocks-e2e/cypress.json",
+        "devServerTarget": "pimp-my-stocks:serve:development"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "pimp-my-stocks:serve:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/pimp-my-stocks-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["pimp-my-stocks"]
+}

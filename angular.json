@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "projects": {
+    "api": "apps/api",
+    "api-interfaces": "libs/api-interfaces",
+    "pimp-my-stocks": "apps/pimp-my-stocks",
+    "pimp-my-stocks-e2e": "apps/pimp-my-stocks-e2e"
+  }
+}
