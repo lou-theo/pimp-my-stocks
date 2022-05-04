@@ -1,0 +1,54 @@
+/* tslint:disable */
+/* eslint-disable */
+export interface SummaryDetailDto {
+  ask?: number;
+  askSize?: number;
+  averageDailyVolume10Day?: number;
+  averageVolume?: number;
+  averageVolume10days?: number;
+  beta?: number;
+  bid?: number;
+  bidSize?: number;
+  circulatingSupply?: number;
+  currency: string;
+  dayHigh?: number;
+  dayLow?: number;
+  dividendRate?: number;
+  dividendYield?: number;
+  exDividendDate?: string;
+  expireDate?: string;
+  fiftyDayAverage?: number;
+  fiftyTwoWeekHigh?: number;
+  fiftyTwoWeekLow?: number;
+  fiveYearAvgDividendYield?: number;
+  forwardPE?: number;
+  fromCurrency: null | string;
+  lastMarket: null | string;
+  marketCap?: number;
+  maxAge: number;
+  navPrice?: number;
+  open?: number;
+  openInterest?: number;
+  payoutRatio?: number;
+  previousClose?: number;
+  priceHint: number;
+  priceToSalesTrailing12Months?: number;
+  regularMarketDayHigh?: number;
+  regularMarketDayLow?: number;
+  regularMarketOpen?: number;
+  regularMarketPreviousClose?: number;
+  regularMarketVolume?: number;
+  startDate?: string;
+  toCurrency?: null | string;
+  totalAssets?: number;
+  tradeable: boolean;
+  trailingAnnualDividendRate?: number;
+  trailingAnnualDividendYield?: number;
+  trailingPE?: number;
+  twoHundredDayAverage?: number;
+  volume?: number;
+  volume24Hr?: number;
+  volumeAllCurrencies?: number;
+  yield?: number;
+  ytdReturn?: number;
+}

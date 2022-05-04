@@ -26,10 +26,12 @@
     "@nestjs/platform-fastify": "^8.4.4",
     "@nestjs/swagger": "^5.2.1",
     "@nrwl/angular": "13.10.3",
+    "luxon": "^2.3.2",
     "ng-openapi-gen": "^0.21.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.4.0",
     "tslib": "^2.0.0",
+    "yahoo-finance2": "^2.3.3",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "@nrwl/node": "13.10.3",
     "@nrwl/workspace": "13.10.3",
     "@types/jest": "27.0.2",
+    "@types/luxon": "^2.3.2",
     "@types/node": "16.11.7",
     "@typescript-eslint/eslint-plugin": "~5.18.0",
     "@typescript-eslint/parser": "~5.18.0",

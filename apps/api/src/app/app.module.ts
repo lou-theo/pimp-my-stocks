@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { AppController } from './controllers/app.controller';
-import { AppService } from './services/app.service';
+import { YahooController } from './controllers/yahoo.controller';
+import { YahooService } from './services/yahoo.service';
 
 @Module({
   imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [YahooController],
+  providers: [YahooService],
 })
 export class AppModule {}
