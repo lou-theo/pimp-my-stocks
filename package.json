@@ -6,6 +6,7 @@
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
     "start": "nx run-many --target=serve --all",
+    "api:gen": "ng-openapi-gen --input http://localhost:3333/api/docs/yaml --output apps/pimp-my-stocks/src/app/core/api",
     "build": "nx build",
     "test": "nx test"
   },
@@ -25,6 +26,7 @@
     "@nestjs/platform-fastify": "^8.4.4",
     "@nestjs/swagger": "^5.2.1",
     "@nrwl/angular": "13.10.3",
+    "ng-openapi-gen": "^0.21.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.4.0",
     "tslib": "^2.0.0",
