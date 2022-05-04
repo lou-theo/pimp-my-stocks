@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/pimp-my-stocks",
         "index": "apps/pimp-my-stocks/src/index.html",
@@ -18,7 +20,9 @@
           "apps/pimp-my-stocks/src/favicon.ico",
           "apps/pimp-my-stocks/src/assets"
         ],
-        "styles": ["apps/pimp-my-stocks/src/styles.scss"],
+        "styles": [
+          "apps/pimp-my-stocks/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -86,7 +90,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/pimp-my-stocks"],
+      "outputs": [
+        "coverage/apps/pimp-my-stocks"
+      ],
       "options": {
         "jestConfig": "apps/pimp-my-stocks/jest.config.js",
         "passWithNoTests": true

@@ -17,12 +17,18 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/pimp-my-stocks-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": [
+          "apps/pimp-my-stocks-e2e/**/*.{js,ts}"
+        ]
       }
     }
   },
   "tags": [],
-  "implicitDependencies": ["pimp-my-stocks"]
+  "implicitDependencies": [
+    "pimp-my-stocks"
+  ]
 }

@@ -4,6 +4,7 @@
     "api": "apps/api",
     "api-interfaces": "libs/api-interfaces",
     "pimp-my-stocks": "apps/pimp-my-stocks",
+    "pimp-my-stocks-desktop": "apps/pimp-my-stocks-desktop",
     "pimp-my-stocks-e2e": "apps/pimp-my-stocks-e2e"
   }
 }

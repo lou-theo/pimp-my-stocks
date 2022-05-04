@@ -2,5 +2,9 @@
   "/api": {
     "target": "http://localhost:3333",
     "secure": false
+  },
+  "/pimp-my-stocks-desktop-api": {
+    "target": "http://localhost:3000",
+    "secure": false
   }
 }
