@@ -1,3 +1,32 @@
+<div fxLayout="column" fxLayoutAlign="start start">
+    <mat-form-field appearance="fill">
+        <mat-label>Start date</mat-label>
+        <input
+            matInput
+            [matDatepicker]="picker"
+            [formControl]="startDateControl"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+
+        <mat-error *ngIf="startDateControl.hasError('isAfter')"
+            >Start date cannot be after today.</mat-error
+        >
+    </mat-form-field>
+
+    <mat-button-toggle-group
+        name="interval"
+        aria-label="Chart Interval"
+        [formControl]="intervalControl"
+    >
+        <mat-button-toggle
+            *ngFor="let interval of CHART_INTERVALS"
+            [value]="interval"
+            ><span class="mat-small">{{ interval }}</span></mat-button-toggle
+        >
+    </mat-button-toggle-group>
+</div>
+
 <canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
 <div [hidden]="hasChart$ | async">
     <p>No data.</p>

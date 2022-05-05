@@ -13,6 +13,11 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+
 @NgModule({
     declarations: [ChartComponent, QuoteSearchComponent, QuoteDetailsComponent],
     imports: [
@@ -27,6 +32,9 @@ import { MatChipsModule } from '@angular/material/chips';
         MatFormFieldModule,
         MatInputModule,
         MatChipsModule,
+        MatButtonToggleModule,
+        MatDatepickerModule,
+        MatLuxonDateModule,
     ],
     exports: [
         CommonModule,
@@ -43,6 +51,9 @@ import { MatChipsModule } from '@angular/material/chips';
         MatFormFieldModule,
         MatInputModule,
         MatChipsModule,
+        MatButtonToggleModule,
+        MatDatepickerModule,
     ],
+    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr' }],
 })
 export class SharedModule {}

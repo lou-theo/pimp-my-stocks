@@ -5,6 +5,8 @@ import {
     AfterViewInit,
     ElementRef,
     Input,
+    OnInit,
+    OnDestroy,
 } from '@angular/core';
 import { ApiService } from '../../../../core/api/services';
 import Chart, {
@@ -13,8 +15,16 @@ import Chart, {
     ChartTypeRegistry,
 } from 'chart.js/auto';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
+import {
+    BehaviorSubject,
+    firstValueFrom,
+    Observable,
+    Subscription,
+} from 'rxjs';
 import { ChartResultArrayDto } from '../../../../core/api/models/chart-result-array-dto';
+import { ChartInterval, CHART_INTERVALS } from '@sic/api-interfaces';
+import { FormControl, Validators } from '@angular/forms';
+import { isBeforeDateValidator } from '../../../../core/validators/before-date';
 
 @Component({
     selector: 'sic-chart',
@@ -22,7 +32,7 @@ import { ChartResultArrayDto } from '../../../../core/api/models/chart-result-ar
     styleUrls: ['./chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartComponent implements AfterViewInit {
+export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('chart') canvas?: ElementRef<HTMLCanvasElement>;
 
     private _symbol: string | null = null;
@@ -37,7 +47,35 @@ export class ChartComponent implements AfterViewInit {
     );
     public hasChart$: Observable<boolean> = this.hasChart.asObservable();
 
+    public intervalControl: FormControl = new FormControl(
+        '1mo' as ChartInterval
+    );
+    public startDateControl: FormControl = new FormControl(
+        DateTime.now().minus({ years: 1 }),
+        isBeforeDateValidator(DateTime.now())
+    );
+
+    CHART_INTERVALS = CHART_INTERVALS;
+
+    private subscriptions: Subscription = new Subscription();
+
     constructor(private readonly apiService: ApiService) {}
+
+    ngOnInit(): void {
+        this.subscriptions.add(
+            this.startDateControl.valueChanges.subscribe(() => {
+                if (this.startDateControl.valid) {
+                    this.redrawChart();
+                }
+            })
+        );
+
+        this.subscriptions.add(
+            this.intervalControl.valueChanges.subscribe(() => {
+                this.redrawChart();
+            })
+        );
+    }
 
     ngAfterViewInit() {
         this.redrawChart();
@@ -70,6 +108,12 @@ export class ChartComponent implements AfterViewInit {
         const chartData: ChartResultArrayDto = await firstValueFrom(
             this.apiService.yahooControllerChart({
                 symbol: this._symbol,
+                start: this.startDateControl.valid
+                    ? this.startDateControl.value
+                    : undefined,
+                interval: this.intervalControl.valid
+                    ? this.intervalControl.value
+                    : undefined,
             })
         );
 
@@ -77,7 +121,7 @@ export class ChartComponent implements AfterViewInit {
         const maxVolume = Math.max(...chartData.quotes.map((s) => s.volume));
         const data: ChartData<keyof ChartTypeRegistry, number[], string> = {
             labels: chartData.quotes.map((s) =>
-                DateTime.fromISO(s.date).toISODate()
+                DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
             ),
             datasets: [
                 {
@@ -125,5 +169,9 @@ export class ChartComponent implements AfterViewInit {
 
         this.chart = new Chart(ctx, config);
         this.hasChart.next(true);
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
     }
 }
