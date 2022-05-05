@@ -12,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
+import { MatChipsModule } from '@angular/material/chips';
 @NgModule({
     declarations: [ChartComponent, QuoteSearchComponent, QuoteDetailsComponent],
     imports: [
@@ -26,6 +26,7 @@ import { MatInputModule } from '@angular/material/input';
         FlexLayoutModule,
         MatFormFieldModule,
         MatInputModule,
+        MatChipsModule,
     ],
     exports: [
         CommonModule,
@@ -41,6 +42,7 @@ import { MatInputModule } from '@angular/material/input';
         FlexLayoutModule,
         MatFormFieldModule,
         MatInputModule,
+        MatChipsModule,
     ],
 })
 export class SharedModule {}

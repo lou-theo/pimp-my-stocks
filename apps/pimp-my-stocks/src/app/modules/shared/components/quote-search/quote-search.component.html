@@ -18,7 +18,16 @@
         [label]="group.key"
     >
         <mat-option *ngFor="let quote of group.value" [value]="quote.symbol">
-            {{ quote.shortname }}
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <span>{{ quote.shortname }}</span>
+                <mat-chip-list>
+                    <mat-chip>
+                        <span class="mat-small">
+                            {{ quote.symbol }}</span
+                        ></mat-chip
+                    >
+                </mat-chip-list>
+            </div>
         </mat-option>
     </mat-optgroup>
 </mat-autocomplete>
