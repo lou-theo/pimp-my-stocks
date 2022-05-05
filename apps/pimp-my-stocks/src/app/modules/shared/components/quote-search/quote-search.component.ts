@@ -64,7 +64,6 @@ export class QuoteSearchComponent implements OnInit, OnDestroy {
             }
         }
 
-        console.log(mappedResults);
         this.quotes.next(mappedResults);
     }
 

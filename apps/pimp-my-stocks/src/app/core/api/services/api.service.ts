@@ -9,6 +9,7 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
+import { ChartResultArrayDto } from '../models/chart-result-array-dto';
 import { QuoteSummaryDto } from '../models/quote-summary-dto';
 import { SearchNewsDto } from '../models/search-news-dto';
 import { SearchQuoteDto } from '../models/search-quote-dto';
@@ -175,12 +176,15 @@ export class ApiService extends BaseService {
    */
   yahooControllerChart$Response(params: {
     symbol: string;
-  }): Observable<StrictHttpResponse<{
-}>> {
+    start?: string;
+    interval?: string;
+  }): Observable<StrictHttpResponse<ChartResultArrayDto>> {
 
     const rb = new RequestBuilder(this.rootUrl, ApiService.YahooControllerChartPath, 'get');
     if (params) {
       rb.path('symbol', params.symbol, {});
+      rb.query('start', params.start, {});
+      rb.query('interval', params.interval, {});
     }
 
     return this.http.request(rb.build({
@@ -189,8 +193,7 @@ export class ApiService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<{
-        }>;
+        return r as StrictHttpResponse<ChartResultArrayDto>;
       })
     );
   }
@@ -203,13 +206,12 @@ export class ApiService extends BaseService {
    */
   yahooControllerChart(params: {
     symbol: string;
-  }): Observable<{
-}> {
+    start?: string;
+    interval?: string;
+  }): Observable<ChartResultArrayDto> {
 
     return this.yahooControllerChart$Response(params).pipe(
-      map((r: StrictHttpResponse<{
-}>) => r.body as {
-})
+      map((r: StrictHttpResponse<ChartResultArrayDto>) => r.body as ChartResultArrayDto)
     );
   }
 

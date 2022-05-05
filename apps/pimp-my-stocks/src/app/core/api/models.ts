@@ -9,3 +9,8 @@ export { TopHoldingsBondRatingDto } from './models/top-holdings-bond-rating-dto'
 export { TopHoldingsSectorWeightingDto } from './models/top-holdings-sector-weighting-dto';
 export { TopHoldingsDto } from './models/top-holdings-dto';
 export { QuoteSummaryDto } from './models/quote-summary-dto';
+export { ChartMetaTradingPeriodDto } from './models/chart-meta-trading-period-dto';
+export { ChartMetaTradingPeriodsDto } from './models/chart-meta-trading-periods-dto';
+export { ChartMetaDto } from './models/chart-meta-dto';
+export { ChartResultArrayQuoteDto } from './models/chart-result-array-quote-dto';
+export { ChartResultArrayDto } from './models/chart-result-array-dto';

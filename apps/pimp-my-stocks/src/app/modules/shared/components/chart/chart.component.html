@@ -1,1 +1,4 @@
-<canvas #myChart width="400" height="400"></canvas>
+<canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
+<div [hidden]="hasChart$ | async">
+    <p>No data.</p>
+</div>

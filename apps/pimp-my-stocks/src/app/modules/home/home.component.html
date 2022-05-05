@@ -5,6 +5,9 @@
     ></sic-quote-search>
 </div>
 <div fxLayout="row">
-    <sic-chart></sic-chart>
-    <sic-quote-details [symbol]="currentSymbol"></sic-quote-details>
+    <sic-chart fxFlex="70%" [symbol]="currentSymbol"></sic-chart>
+    <sic-quote-details
+        fxFlex="30%"
+        [symbol]="currentSymbol"
+    ></sic-quote-details>
 </div>

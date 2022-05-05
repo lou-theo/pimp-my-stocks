@@ -24,7 +24,6 @@ export class QuoteDetailsComponent {
                     symbol: value,
                 })
             ).then((summary) => {
-                console.log(summary);
                 this.summary.next(summary);
             });
         }
