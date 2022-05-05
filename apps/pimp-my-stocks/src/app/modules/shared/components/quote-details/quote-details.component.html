@@ -1,1 +1,6 @@
-<p>quote-details works!</p>
+<ng-container *ngIf="summary$ | async as summary; else noData">
+    {{ summary.summaryProfile?.longBusinessSummary }}
+</ng-container>
+<ng-template #noData>
+    <p>No data.</p>
+</ng-template>

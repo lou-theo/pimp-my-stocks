@@ -1,3 +1,10 @@
-<sic-quote-search></sic-quote-search>
-<sic-chart></sic-chart>
-<sic-quote-details></sic-quote-details>
+<div fxLayout="row">
+    <sic-quote-search
+        fxFlex="1 0 auto"
+        (symbolSelected)="currentSymbol = $event"
+    ></sic-quote-search>
+</div>
+<div fxLayout="row">
+    <sic-chart></sic-chart>
+    <sic-quote-details [symbol]="currentSymbol"></sic-quote-details>
+</div>

@@ -1,4 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+    Component,
+    OnInit,
+    ChangeDetectionStrategy,
+    Input,
+} from '@angular/core';
+import { QuoteSummaryDto } from '../../../../core/api/models';
+import { ApiService } from '../../../../core/api/services';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 
 @Component({
     selector: 'sic-quote-details',
@@ -6,8 +14,26 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
     styleUrls: ['./quote-details.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuoteDetailsComponent implements OnInit {
-    constructor() {}
+export class QuoteDetailsComponent {
+    @Input() set symbol(value: string | null) {
+        if (value === null) {
+            this.summary.next(null);
+        } else {
+            firstValueFrom(
+                this.apiService.yahooControllerQuoteSummary({
+                    symbol: value,
+                })
+            ).then((summary) => {
+                console.log(summary);
+                this.summary.next(summary);
+            });
+        }
+    }
 
-    ngOnInit(): void {}
+    private summary: BehaviorSubject<QuoteSummaryDto | null> =
+        new BehaviorSubject<QuoteSummaryDto | null>(null);
+    public summary$: Observable<QuoteSummaryDto | null> =
+        this.summary.asObservable();
+
+    constructor(private readonly apiService: ApiService) {}
 }

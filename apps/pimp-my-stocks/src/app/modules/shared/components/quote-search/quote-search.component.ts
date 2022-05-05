@@ -3,8 +3,11 @@ import {
     OnInit,
     ChangeDetectionStrategy,
     OnDestroy,
+    Output,
+    EventEmitter,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import {
     BehaviorSubject,
     debounceTime,
@@ -23,6 +26,8 @@ import { ApiService } from '../../../../core/api/services';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuoteSearchComponent implements OnInit, OnDestroy {
+    @Output() symbolSelected: EventEmitter<string> = new EventEmitter<string>();
+
     public searchControl: FormControl = new FormControl('');
 
     private quotes: BehaviorSubject<Map<string, SearchQuoteDto[]>> =

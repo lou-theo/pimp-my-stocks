@@ -1,6 +1,6 @@
 <header>
     <mat-toolbar>
-        <button mat-icon-button>
+        <button mat-icon-button (click)="sidenav.toggle()">
             <mat-icon>menu</mat-icon>
         </button>
         <span>🚀 Pimp my stocks</span>
@@ -8,8 +8,12 @@
 </header>
 
 <mat-sidenav-container>
-    <mat-sidenav mode="side" opened>Sidenav content</mat-sidenav>
+    <mat-sidenav #sidenav mode="side">
+        <nav>Sidenav content</nav>
+    </mat-sidenav>
     <mat-sidenav-content>
-        <router-outlet></router-outlet>
+        <main>
+            <router-outlet></router-outlet>
+        </main>
     </mat-sidenav-content>
 </mat-sidenav-container>
