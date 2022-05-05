@@ -13,6 +13,7 @@ export class SearchQuoteDto implements Partial<SearchQuoteYahoo> {
     newListingDate?: Date;
     prevName?: string;
     nameChangeDate?: Date;
+    quoteType: string;
 }
 
 export class SearchNewsDto implements Partial<SearchNews> {

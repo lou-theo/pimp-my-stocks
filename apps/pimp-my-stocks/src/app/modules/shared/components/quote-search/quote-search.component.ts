@@ -5,9 +5,6 @@ import {
     OnDestroy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { SearchQuoteDto } from '@sic/core/api/models';
-import { ApiService } from '@sic/core/api/services';
-import { notUndefined } from '@sic/core/utils/not-undefined';
 import {
     BehaviorSubject,
     debounceTime,
@@ -16,6 +13,8 @@ import {
     Observable,
     Subscription,
 } from 'rxjs';
+import { SearchQuoteDto } from '../../../../core/api/models';
+import { ApiService } from '../../../../core/api/services';
 
 @Component({
     selector: 'sic-quote-search',
@@ -26,10 +25,10 @@ import {
 export class QuoteSearchComponent implements OnInit, OnDestroy {
     public searchControl: FormControl = new FormControl('');
 
-    private quotes: BehaviorSubject<string[]> = new BehaviorSubject<string[]>(
-        []
-    );
-    public quotes$: Observable<string[]> = this.quotes.asObservable();
+    private quotes: BehaviorSubject<Map<string, SearchQuoteDto[]>> =
+        new BehaviorSubject<Map<string, SearchQuoteDto[]>>(new Map());
+    public quotes$: Observable<Map<string, SearchQuoteDto[]>> =
+        this.quotes.asObservable();
 
     private subscriptions: Subscription = new Subscription();
 
@@ -50,10 +49,18 @@ export class QuoteSearchComponent implements OnInit, OnDestroy {
             this.apiService.yahooControllerSearch({ query: value })
         );
 
-        const quotes: string[] = searchResult
-            .map((r) => r.longname)
-            .filter(notUndefined);
-        this.quotes.next(quotes);
+        const mappedResults: Map<string, SearchQuoteDto[]> = new Map();
+
+        for (const result of searchResult) {
+            if (mappedResults.has(result.quoteType)) {
+                mappedResults.get(result.quoteType)?.push(result);
+            } else {
+                mappedResults.set(result.quoteType, [result]);
+            }
+        }
+
+        console.log(mappedResults);
+        this.quotes.next(mappedResults);
     }
 
     ngOnDestroy(): void {

@@ -9,21 +9,39 @@ import { QuoteSummaryResult } from 'yahoo-finance2/dist/esm/src/modules/quoteSum
 import {
     SearchNews,
     SearchQuoteYahoo,
+    SearchQuoteYahooCryptocurrency,
+    SearchQuoteYahooCurrency,
+    SearchQuoteYahooEquity,
+    SearchQuoteYahooETF,
+    SearchQuoteYahooFund,
+    SearchQuoteYahooFuture,
+    SearchQuoteYahooIndex,
+    SearchQuoteYahooOption,
     SearchResult,
 } from 'yahoo-finance2/dist/esm/src/modules/search';
 
 import { Injectable } from '@nestjs/common';
 import { ChartInterval, YahooApi } from '@sic/api-interfaces';
 
+type SearchQuoteResult =
+    | SearchQuoteYahooEquity
+    | SearchQuoteYahooOption
+    | SearchQuoteYahooETF
+    | SearchQuoteYahooFund
+    | SearchQuoteYahooIndex
+    | SearchQuoteYahooCurrency
+    | SearchQuoteYahooCryptocurrency
+    | SearchQuoteYahooFuture;
+
 @Injectable()
 export class YahooService implements YahooApi {
-    public async search(query: string): Promise<SearchQuoteYahoo[]> {
+    public async search(query: string): Promise<SearchQuoteResult[]> {
         let result: SearchResult;
         try {
             result = await yahooFinance.search(query);
             return result.quotes.filter(
                 (q) => q.isYahooFinance === true
-            ) as SearchQuoteYahoo[];
+            ) as SearchQuoteResult[];
         } catch (error: any) {
             this.handleError(query, error);
             return [];

@@ -1,0 +1,18 @@
+<input
+    type="text"
+    placeholder="Search"
+    aria-label="Search"
+    matInput
+    [formControl]="searchControl"
+    [matAutocomplete]="auto"
+/>
+<mat-autocomplete #auto="matAutocomplete">
+    <mat-optgroup
+        *ngFor="let group of quotes$ | async | keyvalue"
+        [label]="group.key"
+    >
+        <mat-option *ngFor="let quote of group.value" [value]="quote.symbol">
+            {{ quote.shortname }}
+        </mat-option>
+    </mat-optgroup>
+</mat-autocomplete>

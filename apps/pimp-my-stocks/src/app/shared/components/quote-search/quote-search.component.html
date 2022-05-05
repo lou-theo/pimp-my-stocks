@@ -1,6 +1,0 @@
-<label for="quote">Search:</label>
-<input list="quotes" name="quote" id="quote" [formControl]="searchControl" />
-
-<datalist id="quotes">
-    <option *ngFor="let quote of quotes$ | async" value="{{ quote }}"></option>
-</datalist>

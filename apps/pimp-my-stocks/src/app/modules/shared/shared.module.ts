@@ -5,9 +5,22 @@ import { QuoteSearchComponent } from './components/quote-search/quote-search.com
 import { QuoteDetailsComponent } from './components/quote-details/quote-details.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+
 @NgModule({
     declarations: [ChartComponent, QuoteSearchComponent, QuoteDetailsComponent],
-    imports: [CommonModule, FormsModule, ReactiveFormsModule],
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatAutocompleteModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatIconModule,
+    ],
     exports: [
         CommonModule,
         FormsModule,
@@ -15,6 +28,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         ChartComponent,
         QuoteSearchComponent,
         QuoteDetailsComponent,
+        MatAutocompleteModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatIconModule,
     ],
 })
 export class SharedModule {}

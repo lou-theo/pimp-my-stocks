@@ -7,6 +7,7 @@ export interface SearchQuoteDto {
   nameChangeDate?: string;
   newListingDate?: string;
   prevName?: string;
+  quoteType: string;
   score: number;
   shortname?: string;
   symbol: string;

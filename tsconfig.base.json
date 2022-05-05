@@ -15,8 +15,7 @@
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
         "paths": {
-            "@sic/api-interfaces": ["libs/api-interfaces/src/index.ts"],
-            "@sic/core/*": ["apps/pimp-my-stocks/src/app/core/*"]
+            "@sic/api-interfaces": ["libs/api-interfaces/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]
