@@ -23,7 +23,7 @@ import {
 } from 'rxjs';
 import { ChartResultArrayDto } from '../../../../core/api/models/chart-result-array-dto';
 import { ChartInterval, CHART_INTERVALS } from '@sic/api-interfaces';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { isBeforeDateValidator } from '../../../../core/validators/before-date';
 
 @Component({
