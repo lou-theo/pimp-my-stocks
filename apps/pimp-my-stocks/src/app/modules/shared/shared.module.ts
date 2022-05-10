@@ -19,6 +19,8 @@ import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 @NgModule({
     declarations: [ChartComponent, QuoteSearchComponent, QuoteDetailsComponent],
     imports: [
@@ -38,6 +40,7 @@ import { MatDividerModule } from '@angular/material/divider';
         MatLuxonDateModule,
         MatCardModule,
         MatDividerModule,
+        MatProgressBarModule,
     ],
     exports: [
         CommonModule,
@@ -58,6 +61,7 @@ import { MatDividerModule } from '@angular/material/divider';
         MatDatepickerModule,
         MatCardModule,
         MatDividerModule,
+        MatProgressBarModule,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr' }],
 })

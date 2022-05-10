@@ -39,7 +39,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     private _symbol: string | null = null;
     @Input() set symbol(value: string | null) {
         this._symbol = value;
-        this.redrawChart();
+        this.updateChart();
     }
 
     private chart: Chart | null = null;
@@ -56,9 +56,18 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         isBeforeDateValidator(DateTime.now())
     );
 
-    public chartError: string | null = null;
+    private chartError: BehaviorSubject<string | null> = new BehaviorSubject<
+        string | null
+    >(null);
+    public chartError$: Observable<string | null> =
+        this.chartError.asObservable();
 
     CHART_INTERVALS = CHART_INTERVALS;
+
+    private isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+        false
+    );
+    public isLoading$: Observable<boolean> = this.isLoading.asObservable();
 
     private subscriptions: Subscription = new Subscription();
 
@@ -68,23 +77,32 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         this.subscriptions.add(
             this.startDateControl.valueChanges.subscribe(() => {
                 if (this.startDateControl.valid) {
-                    this.redrawChart();
+                    this.updateChart();
                 }
             })
         );
 
         this.subscriptions.add(
             this.intervalControl.valueChanges.subscribe(() => {
-                this.redrawChart();
+                this.updateChart();
             })
         );
     }
 
     ngAfterViewInit() {
-        this.redrawChart();
+        this.updateChart();
+    }
+
+    private async updateChart(): Promise<void> {
+        this.isLoading.next(true);
+        await this.redrawChart();
+        this.isLoading.next(false);
     }
 
     private async redrawChart(): Promise<void> {
+        this.hasChart.next(false);
+        this.chartError.next(null);
+
         if (this.canvas === undefined) {
             return;
         }
@@ -103,19 +121,18 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (this._symbol === null) {
-            this.hasChart.next(false);
             return;
         }
 
         // Get api data
-        let chartData: ChartResultArrayDto;
+        let chartData: ChartResultArrayDto | null;
 
         try {
             chartData = await firstValueFrom(
                 this.apiService.yahooControllerChart({
                     symbol: this._symbol,
                     start: this.startDateControl.valid
-                        ? this.startDateControl.value
+                        ? this.startDateControl.value.toISO()
                         : undefined,
                     interval: this.intervalControl.valid
                         ? this.intervalControl.value
@@ -124,12 +141,18 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             );
         } catch (error: any) {
             if (error instanceof HttpErrorResponse) {
-                this.chartError = (error as HttpErrorResponse).error.message;
+                this.chartError.next(
+                    (error as HttpErrorResponse).error.message
+                );
             } else {
-                this.chartError = 'Unknown error.';
+                this.chartError.next('Unknown error.');
             }
 
-            this.hasChart.next(false);
+            return;
+        }
+
+        if (chartData === null) {
+            this.chartError.next('No data available.');
             return;
         }
 

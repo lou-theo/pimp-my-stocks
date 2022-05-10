@@ -28,9 +28,19 @@
 </div>
 
 <mat-card>
-    <canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
-    <div [hidden]="hasChart$ | async">
-        <p *ngIf="chartError === null" class="no-data">No data.</p>
-        <mat-error *ngIf="chartError !== null">{{ chartError }}</mat-error>
+    <div [hidden]="(isLoading$ | async) === false">
+        <mat-progress-bar mode="buffer"></mat-progress-bar>
+    </div>
+
+    <div [hidden]="isLoading$ | async">
+        <canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
+        <div [hidden]="hasChart$ | async">
+            <p *ngIf="(chartError$ | async) === null" class="no-data">
+                No data.
+            </p>
+            <mat-error *ngIf="(chartError$ | async) !== null">{{
+                chartError$ | async
+            }}</mat-error>
+        </div>
     </div>
 </mat-card>
