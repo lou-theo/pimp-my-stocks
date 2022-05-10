@@ -1,17 +1,16 @@
-<header>
-    <mat-toolbar>
-        <button mat-icon-button (click)="sidenav.toggle()">
-            <mat-icon>menu</mat-icon>
-        </button>
-        <span>🚀 Pimp my stocks</span>
-    </mat-toolbar>
-</header>
-
 <mat-sidenav-container fullscreen>
     <mat-sidenav #sidenav mode="side">
         <nav>Sidenav content</nav>
     </mat-sidenav>
     <mat-sidenav-content>
+        <header>
+            <mat-toolbar>
+                <button mat-icon-button (click)="sidenav.toggle()">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <span>🚀 Pimp my stocks</span>
+            </mat-toolbar>
+        </header>
         <main>
             <router-outlet></router-outlet>
         </main>

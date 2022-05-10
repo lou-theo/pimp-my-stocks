@@ -25,6 +25,7 @@ import { ChartResultArrayDto } from '../../../../core/api/models/chart-result-ar
 import { ChartInterval, CHART_INTERVALS } from '@sic/api-interfaces';
 import { FormControl } from '@angular/forms';
 import { isBeforeDateValidator } from '../../../../core/validators/before-date';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector: 'sic-chart',
@@ -54,6 +55,8 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         DateTime.now().minus({ years: 1 }),
         isBeforeDateValidator(DateTime.now())
     );
+
+    public chartError: string | null = null;
 
     CHART_INTERVALS = CHART_INTERVALS;
 
@@ -105,17 +108,30 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         // Get api data
-        const chartData: ChartResultArrayDto = await firstValueFrom(
-            this.apiService.yahooControllerChart({
-                symbol: this._symbol,
-                start: this.startDateControl.valid
-                    ? this.startDateControl.value
-                    : undefined,
-                interval: this.intervalControl.valid
-                    ? this.intervalControl.value
-                    : undefined,
-            })
-        );
+        let chartData: ChartResultArrayDto;
+
+        try {
+            chartData = await firstValueFrom(
+                this.apiService.yahooControllerChart({
+                    symbol: this._symbol,
+                    start: this.startDateControl.valid
+                        ? this.startDateControl.value
+                        : undefined,
+                    interval: this.intervalControl.valid
+                        ? this.intervalControl.value
+                        : undefined,
+                })
+            );
+        } catch (error: any) {
+            if (error instanceof HttpErrorResponse) {
+                this.chartError = (error as HttpErrorResponse).error.message;
+            } else {
+                this.chartError = 'Unknown error.';
+            }
+
+            this.hasChart.next(false);
+            return;
+        }
 
         // Draw chart on the canvas
         const maxVolume = Math.max(...chartData.quotes.map((s) => s.volume));

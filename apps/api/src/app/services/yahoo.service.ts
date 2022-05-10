@@ -8,7 +8,6 @@ import { QuoteSummaryOptions } from 'yahoo-finance2/dist/esm/src/modules/quoteSu
 import { QuoteSummaryResult } from 'yahoo-finance2/dist/esm/src/modules/quoteSummary-iface';
 import {
     SearchNews,
-    SearchQuoteYahoo,
     SearchQuoteYahooCryptocurrency,
     SearchQuoteYahooCurrency,
     SearchQuoteYahooEquity,
@@ -20,7 +19,7 @@ import {
     SearchResult,
 } from 'yahoo-finance2/dist/esm/src/modules/search';
 
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ChartInterval, YahooApi } from '@sic/api-interfaces';
 
 type SearchQuoteResult =
@@ -100,15 +99,22 @@ export class YahooService implements YahooApi {
     }
 
     private handleError(symbol: string, error: any): void {
-        console.error(error);
         if (
             error instanceof yahooFinance.errors['FailedYahooValidationError']
         ) {
+            // Yahoo result was invalid
             console.warn(`Invalid result for "${symbol}": ${error.result}`);
         } else {
             console.warn(
                 `Couldn't get "${symbol}": [${error.name}] ${error.message}`
             );
+
+            if (error instanceof yahooFinance.errors['HTTPError']) {
+                return;
+            }
+
+            // Assume this is because of an invalid request
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }
     }
 }

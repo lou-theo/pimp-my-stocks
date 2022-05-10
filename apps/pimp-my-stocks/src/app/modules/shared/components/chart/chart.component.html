@@ -27,7 +27,10 @@
     </mat-button-toggle-group>
 </div>
 
-<canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
-<div [hidden]="hasChart$ | async">
-    <p>No data.</p>
-</div>
+<mat-card>
+    <canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
+    <div [hidden]="hasChart$ | async">
+        <p *ngIf="chartError === null" class="no-data">No data.</p>
+        <mat-error *ngIf="chartError !== null">{{ chartError }}</mat-error>
+    </div>
+</mat-card>

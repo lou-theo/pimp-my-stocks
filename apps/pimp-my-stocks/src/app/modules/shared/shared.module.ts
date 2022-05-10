@@ -17,7 +17,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatLuxonDateModule } from '@angular/material-luxon-adapter';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 @NgModule({
     declarations: [ChartComponent, QuoteSearchComponent, QuoteDetailsComponent],
     imports: [
@@ -35,6 +36,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
         MatButtonToggleModule,
         MatDatepickerModule,
         MatLuxonDateModule,
+        MatCardModule,
+        MatDividerModule,
     ],
     exports: [
         CommonModule,
@@ -53,6 +56,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
         MatChipsModule,
         MatButtonToggleModule,
         MatDatepickerModule,
+        MatCardModule,
+        MatDividerModule,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr' }],
 })
