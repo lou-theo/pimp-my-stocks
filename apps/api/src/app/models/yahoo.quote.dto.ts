@@ -1,5 +1,6 @@
 import { ApiHideProperty } from '@nestjs/swagger';
 import {
+    Price,
     QuoteSummaryResult,
     QuoteType,
     SummaryDetail,
@@ -9,7 +10,7 @@ import { TopHoldingsDto } from './yahoo.holdings.dto';
 
 export class QuoteSummaryDto implements Partial<QuoteSummaryResult> {
     quoteType?: QuoteTypeDto;
-    summaryDetail?: SummaryDetailDto;
+    price?: PriceDto;
     summaryProfile?: SummaryProfileDto;
     topHoldings?: TopHoldingsDto;
 }
@@ -30,7 +31,34 @@ export class QuoteTypeDto implements Partial<QuoteType> {
     maxAge: number;
 }
 
-export class SummaryDetailDto implements Partial<SummaryDetail> {
+export class PriceDto implements SummaryDetail, Price {
+    averageDailyVolume3Month?: number;
+    exchange: string;
+    exchangeName: string;
+    exchangeDataDelayedBy: number;
+    postMarketChangePercent?: number;
+    postMarketChange?: number;
+    postMarketTime?: Date;
+    postMarketPrice?: number;
+    postMarketSource?: string;
+    preMarketChangePercent?: number;
+    preMarketChange?: number;
+    preMarketTime?: Date;
+    preMarketPrice?: number;
+    preMarketSource?: string;
+    regularMarketChangePercent?: number;
+    regularMarketChange?: number;
+    regularMarketTime?: Date;
+    regularMarketPrice?: number;
+    regularMarketSource?: string;
+    quoteSourceName?: string;
+    quoteType: string;
+    symbol: string;
+    underlyingSymbol: string;
+    shortName: string;
+    longName: string;
+    marketState: string;
+    currencySymbol?: string;
     maxAge: number;
     priceHint: number;
     previousClose?: number;
@@ -74,9 +102,9 @@ export class SummaryDetailDto implements Partial<SummaryDetail> {
     totalAssets?: number;
     navPrice?: number;
     ytdReturn?: number;
-    fromCurrency: string | null;
-    toCurrency?: string | null;
-    lastMarket: string | null;
+    fromCurrency: string;
+    toCurrency?: string;
+    lastMarket: string;
     volume24Hr?: number;
     volumeAllCurrencies?: number;
     circulatingSupply?: number;

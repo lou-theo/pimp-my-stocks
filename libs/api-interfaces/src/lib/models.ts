@@ -1,7 +1,7 @@
 export { SearchQuoteDto } from './models/search-quote-dto';
 export { SearchNewsDto } from './models/search-news-dto';
 export { QuoteTypeDto } from './models/quote-type-dto';
-export { SummaryDetailDto } from './models/summary-detail-dto';
+export { PriceDto } from './models/price-dto';
 export { SummaryProfileDto } from './models/summary-profile-dto';
 export { TopHoldingsHoldingDto } from './models/top-holdings-holding-dto';
 export { TopHoldingsEquityHoldingsDto } from './models/top-holdings-equity-holdings-dto';

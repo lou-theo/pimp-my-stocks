@@ -21,6 +21,8 @@ import {
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ChartInterval } from '@sic/core/models/chart-interval';
+import { PriceDto, QuoteSummaryDto } from '../models/yahoo.quote.dto';
+import * as merge from 'deepmerge';
 
 type SearchQuoteResult =
     | SearchQuoteYahooEquity
@@ -75,20 +77,29 @@ export class YahooService {
      *
      * @param symbol Symbol name as used by Yahoo (often the stock ticker).
      */
-    public async quoteSummary(symbol: string): Promise<QuoteSummaryResult> {
+    public async quoteSummary(symbol: string): Promise<QuoteSummaryDto> {
         const queryOptions: QuoteSummaryOptions = {
             modules: [
                 'summaryProfile', // Industry, website, description...
                 'quoteType', // Exchange, quote type, symbol...
                 'summaryDetail', // Price, market cap...
                 'topHoldings', // Holdings for funds and ETFs
+                'price', // Market percent change
             ],
         };
 
         let result: QuoteSummaryResult;
         try {
             result = await yahooFinance.quoteSummary(symbol, queryOptions);
-            return result;
+            return {
+                summaryProfile: result.summaryProfile,
+                quoteType: result.quoteType,
+                topHoldings: result.topHoldings,
+                price: merge.all([
+                    result.topHoldings,
+                    result.price,
+                ]) as PriceDto,
+            };
         } catch (error: any) {
             this.handleError(symbol, error);
             return {};

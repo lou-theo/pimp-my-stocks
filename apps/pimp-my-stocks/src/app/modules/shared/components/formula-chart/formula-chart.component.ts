@@ -4,6 +4,7 @@ import {
     Input,
     ViewChild,
     ElementRef,
+    AfterViewInit,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from '@sic/core/indicators';
@@ -21,7 +22,7 @@ import * as merge from 'deepmerge';
     styleUrls: ['./formula-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormulaChartComponent {
+export class FormulaChartComponent implements AfterViewInit {
     @ViewChild('chart') canvas?: ElementRef<HTMLCanvasElement>;
 
     @Input()
@@ -34,6 +35,10 @@ export class FormulaChartComponent {
     }
 
     private chart: Chart | null = null;
+
+    ngAfterViewInit(): void {
+        this.redrawChart();
+    }
 
     private async redrawChart(): Promise<void> {
         if (this.canvas === undefined) {

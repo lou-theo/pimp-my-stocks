@@ -28,25 +28,26 @@
 </div>
 
 <mat-card>
-    <div [hidden]="(isLoading$ | async) === false">
+    <div *ngIf="isLoading$ | async; else loaded">
         <mat-progress-bar mode="buffer"></mat-progress-bar>
     </div>
 
-    <div [hidden]="isLoading$ | async">
-        <div [hidden]="(chartResult$ | async) === null">
+    <ng-template #loaded>
+        <div *ngIf="(chartResult$ | async) !== null; else noData">
             <sic-formula-chart
                 *ngFor="let panel of panels"
                 [chartResult]="chartResult$ | async"
                 [indicators]="panel.indicators"
             ></sic-formula-chart>
         </div>
-        <div [hidden]="chartResult$ | async">
+
+        <ng-template #noData>
             <p *ngIf="(chartError$ | async) === null" class="no-data">
                 No data.
             </p>
             <mat-error *ngIf="(chartError$ | async) !== null">{{
                 chartError$ | async
             }}</mat-error>
-        </div>
-    </div>
+        </ng-template>
+    </ng-template>
 </mat-card>
