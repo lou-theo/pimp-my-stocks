@@ -8,12 +8,14 @@ export class OnBalanceVolumeIndicator extends Indicator {
     public transform(
         chartResult: ChartResultArrayDto
     ): IndicatorTransformResult {
+        const results: Map<number, number> = new Map<number, number>();
+
         return {
             dataset: {
                 type: 'line',
                 label: 'OBV',
                 data: chartResult.quotes.map((current, index, quotes) =>
-                    this.calculateObv(quotes, index)
+                    this.calculateObv(quotes, index, results)
                 ),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
@@ -32,15 +34,24 @@ export class OnBalanceVolumeIndicator extends Indicator {
 
     private calculateObv(
         quotes: ChartResultArrayQuoteDto[],
-        currentIndex: number
+        currentIndex: number,
+        results: Map<number, number>
     ): number {
         if (currentIndex == 0) {
             return 0;
         }
 
-        const previousObv = this.calculateObv(quotes, currentIndex - 1);
+        const previousIndex: number = currentIndex - 1;
+        if (!results.has(previousIndex)) {
+            results.set(
+                previousIndex,
+                this.calculateObv(quotes, previousIndex, results)
+            );
+        }
+
+        const previousObv: number = results.get(previousIndex) as number;
         const current = quotes[currentIndex];
-        const previous = quotes[currentIndex - 1];
+        const previous = quotes[previousIndex];
 
         if (current.close > previous.close) {
             return previousObv + current.volume;
