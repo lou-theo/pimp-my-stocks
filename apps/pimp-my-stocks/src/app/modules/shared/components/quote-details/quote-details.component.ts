@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { QuoteSummaryDto } from '@app/core/api/models';
-import { ApiService } from '@app/core/api/services';
+import { QuoteSummaryDto } from '@sic/api-interfaces/models';
+import { ApiService } from '@sic/api-interfaces/services';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 
 @Component({

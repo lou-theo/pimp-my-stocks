@@ -1,19 +1,12 @@
 import {
     Component,
     ChangeDetectionStrategy,
-    ViewChild,
     AfterViewInit,
-    ElementRef,
     Input,
     OnInit,
     OnDestroy,
 } from '@angular/core';
-import { ApiService } from '@app/core/api/services';
-import Chart, {
-    ChartConfiguration,
-    ChartData,
-    ChartTypeRegistry,
-} from 'chart.js/auto';
+import { ApiService } from '@sic/api-interfaces/services';
 import { DateTime } from 'luxon';
 import {
     BehaviorSubject,
@@ -22,20 +15,16 @@ import {
     ReplaySubject,
     Subscription,
 } from 'rxjs';
-import { ChartResultArrayDto } from '@app/core/api/models/chart-result-array-dto';
-import { ChartInterval, CHART_INTERVALS } from '@sic/api-interfaces';
 import { FormControl } from '@angular/forms';
-import { isBeforeDateValidator } from '@app/core/validators/before-date';
 import { HttpErrorResponse } from '@angular/common/http';
-import { VolumeIndicator } from '@app/core/indicators/volume';
-import { PriceIndicator } from '@app/core/indicators/price';
+import { ChartResultArrayDto } from '@sic/api-interfaces/models/chart-result-array-dto';
+import { ChartInterval, CHART_INTERVALS, ChartPanel } from '@sic/core/models';
+import { isBeforeDateValidator } from '@sic/core/validators';
 import {
-    Indicator,
-    IndicatorTransformResult,
-} from '@app/core/indicators/indicator';
-import { ChartPanel } from '@app/core/models/chart-panel';
-import { OnBalanceVolumeIndicator } from '@app/core/indicators/on-balance-volume';
-import { ChartResultArrayQuoteDto } from '@app/core/api/models';
+    PriceIndicator,
+    VolumeIndicator,
+    OnBalanceVolumeIndicator,
+} from '@sic/core/indicators';
 
 @Component({
     selector: 'sic-chart',
@@ -134,7 +123,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
                         : undefined,
                 })
             );
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (error instanceof HttpErrorResponse) {
                 this.chartError.next(
                     (error as HttpErrorResponse).error.message

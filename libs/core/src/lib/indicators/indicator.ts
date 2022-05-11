@@ -1,5 +1,5 @@
 import { ChartConfiguration, ChartDataset, ChartTypeRegistry } from 'chart.js';
-import { ChartResultArrayDto } from '../api/models';
+import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 
 type Configuration = ChartConfiguration<
     keyof ChartTypeRegistry,

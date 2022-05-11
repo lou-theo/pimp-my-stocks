@@ -20,7 +20,7 @@ import {
 } from 'yahoo-finance2/dist/esm/src/modules/search';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ChartInterval, YahooApi } from '@sic/api-interfaces';
+import { ChartInterval } from '@sic/core/models/chart-interval';
 
 type SearchQuoteResult =
     | SearchQuoteYahooEquity
@@ -33,7 +33,13 @@ type SearchQuoteResult =
     | SearchQuoteYahooFuture;
 
 @Injectable()
-export class YahooService implements YahooApi {
+export class YahooService {
+    /**
+     * Search for symbols, companies.
+     *
+     * @param query Search query.
+     * @returns Found quotes (Equity, Option, ETF, Fund, Index, Currency, Cryptocurrency or Future).
+     */
     public async search(query: string): Promise<SearchQuoteResult[]> {
         let result: SearchResult;
         try {
@@ -47,6 +53,12 @@ export class YahooService implements YahooApi {
         }
     }
 
+    /**
+     * Search for news.
+     *
+     * @param query Search query.
+     * @returns Found news.
+     */
     public async news(query: string): Promise<SearchNews[]> {
         let result: SearchResult;
         try {
@@ -58,6 +70,11 @@ export class YahooService implements YahooApi {
         }
     }
 
+    /**
+     * Get the details for a given quote.
+     *
+     * @param symbol Symbol name as used by Yahoo (often the stock ticker).
+     */
     public async quoteSummary(symbol: string): Promise<QuoteSummaryResult> {
         const queryOptions: QuoteSummaryOptions = {
             modules: [
@@ -78,6 +95,13 @@ export class YahooService implements YahooApi {
         }
     }
 
+    /**
+     * Get chart data for the given quote.
+     *
+     * @param symbol Symbol name as used by Yahoo (often the stock ticker).
+     * @param startPeriod Start date.
+     * @param interval Data point interval.
+     */
     public async chart(
         symbol: string,
         startPeriod: DateTime,

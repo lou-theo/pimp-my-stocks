@@ -1,8 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
-import { ChartInterval, isChartInterval } from '@sic/api-interfaces';
+import {
+    ChartInterval,
+    isChartInterval,
+} from '@sic/core/models/chart-interval';
 import { DateTime } from 'luxon';
-import { ChartResultArray } from 'yahoo-finance2/dist/esm/src/modules/chart';
 import { ChartResultArrayDto } from '../models/yahoo.chart.dto';
 import { QuoteSummaryDto } from '../models/yahoo.quote.dto';
 import { SearchNewsDto, SearchQuoteDto } from '../models/yahoo.search.dto';

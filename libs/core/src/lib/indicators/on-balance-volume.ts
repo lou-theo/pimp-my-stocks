@@ -1,4 +1,7 @@
-import { ChartResultArrayDto, ChartResultArrayQuoteDto } from '../api/models';
+import {
+    ChartResultArrayDto,
+    ChartResultArrayQuoteDto,
+} from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
 
 export class OnBalanceVolumeIndicator extends Indicator {

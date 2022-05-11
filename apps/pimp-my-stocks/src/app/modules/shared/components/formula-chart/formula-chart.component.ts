@@ -1,16 +1,12 @@
 import {
     Component,
-    OnInit,
     ChangeDetectionStrategy,
     Input,
     ViewChild,
     ElementRef,
 } from '@angular/core';
-import { ChartResultArrayDto } from '@app/core/api/models';
-import {
-    Indicator,
-    IndicatorTransformResult,
-} from '@app/core/indicators/indicator';
+import { ChartResultArrayDto } from '@sic/api-interfaces/models';
+import { Indicator, IndicatorTransformResult } from '@sic/core/indicators';
 import Chart, {
     ChartConfiguration,
     ChartData,

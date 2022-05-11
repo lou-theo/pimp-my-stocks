@@ -1,4 +1,4 @@
-import { ChartResultArrayDto } from '../api/models';
+import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
 
 export class VolumeIndicator extends Indicator {
