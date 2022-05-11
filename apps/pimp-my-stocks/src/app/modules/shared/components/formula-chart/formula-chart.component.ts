@@ -15,6 +15,8 @@ import Chart, {
 } from 'chart.js/auto';
 import { DateTime } from 'luxon';
 import * as merge from 'deepmerge';
+import { MatDialog } from '@angular/material/dialog';
+import { IndicatorDialogComponent } from '../indicator-dialog/indicator-dialog.component';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -25,16 +27,28 @@ import * as merge from 'deepmerge';
 export class FormulaChartComponent implements AfterViewInit {
     @ViewChild('chart') canvas?: ElementRef<HTMLCanvasElement>;
 
+    private _indicators: Indicator[] = [];
     @Input()
-    indicators: Indicator[] = [];
+    set indicators(value: Indicator[]) {
+        this._indicators = value;
+        this.redrawChart();
+    }
+    get indicators(): Indicator[] {
+        return this._indicators;
+    }
 
     private _chartResult: ChartResultArrayDto | null = null;
     @Input() set chartResult(value: ChartResultArrayDto | null) {
         this._chartResult = value;
         this.redrawChart();
     }
+    get chartResult(): ChartResultArrayDto | null {
+        return this._chartResult;
+    }
 
     private chart: Chart | null = null;
+
+    constructor(public dialog: MatDialog) {}
 
     ngAfterViewInit(): void {
         this.redrawChart();
@@ -58,19 +72,19 @@ export class FormulaChartComponent implements AfterViewInit {
             this.chart = null;
         }
 
-        if (this._chartResult === null) {
+        if (this.chartResult === null) {
             return;
         }
 
         const results: IndicatorTransformResult[] = [];
 
         for (const indicator of this.indicators) {
-            results.push(indicator.transform(this._chartResult));
+            results.push(indicator.transform(this.chartResult));
         }
 
         // Draw chart on the canvas
         const data: ChartData<keyof ChartTypeRegistry, number[], string> = {
-            labels: this._chartResult.quotes.map((s) =>
+            labels: this.chartResult.quotes.map((s) =>
                 DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
             ),
             datasets: results.map((i) => i.dataset),
@@ -89,5 +103,20 @@ export class FormulaChartComponent implements AfterViewInit {
         };
 
         this.chart = new Chart(ctx, config);
+    }
+
+    openDialog(): void {
+        const dialogRef = this.dialog.open(IndicatorDialogComponent, {
+            width: '250px',
+            data: this.indicators,
+        });
+
+        dialogRef.afterClosed().subscribe((result: Indicator | undefined) => {
+            if (result === undefined) {
+                return;
+            }
+
+            this.indicators = [...this.indicators, result];
+        });
     }
 }

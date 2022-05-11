@@ -2,6 +2,10 @@ import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
 
 export class PriceIndicator extends Indicator {
+    public get name(): string {
+        return 'Price';
+    }
+
     public transform(
         chartResult: ChartResultArrayDto
     ): IndicatorTransformResult {

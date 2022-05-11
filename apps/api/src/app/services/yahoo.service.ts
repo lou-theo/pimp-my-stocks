@@ -96,8 +96,8 @@ export class YahooService {
                 quoteType: result.quoteType,
                 topHoldings: result.topHoldings,
                 price: merge.all([
-                    result.topHoldings,
-                    result.price,
+                    result.topHoldings ?? {},
+                    result.price ?? {},
                 ]) as PriceDto,
             };
         } catch (error: any) {

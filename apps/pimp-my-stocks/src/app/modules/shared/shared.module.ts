@@ -21,6 +21,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { FormulaChartComponent } from './components/formula-chart/formula-chart.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { IndicatorDialogComponent } from './components/indicator-dialog/indicator-dialog.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
     declarations: [
@@ -28,6 +33,7 @@ import { FormulaChartComponent } from './components/formula-chart/formula-chart.
         QuoteSearchComponent,
         QuoteDetailsComponent,
         FormulaChartComponent,
+        IndicatorDialogComponent,
     ],
     imports: [
         CommonModule,
@@ -47,6 +53,10 @@ import { FormulaChartComponent } from './components/formula-chart/formula-chart.
         MatCardModule,
         MatDividerModule,
         MatProgressBarModule,
+        MatMenuModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatRadioModule,
     ],
     exports: [
         CommonModule,
@@ -69,6 +79,11 @@ import { FormulaChartComponent } from './components/formula-chart/formula-chart.
         MatDividerModule,
         MatProgressBarModule,
         FormulaChartComponent,
+        MatMenuModule,
+        MatButtonModule,
+        MatDialogModule,
+        IndicatorDialogComponent,
+        MatRadioModule,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr' }],
 })

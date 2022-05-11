@@ -5,6 +5,10 @@ import {
 import { Indicator, IndicatorTransformResult } from './indicator';
 
 export class OnBalanceVolumeIndicator extends Indicator {
+    public get name(): string {
+        return 'OBV';
+    }
+
     public transform(
         chartResult: ChartResultArrayDto
     ): IndicatorTransformResult {

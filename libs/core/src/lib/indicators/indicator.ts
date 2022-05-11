@@ -13,6 +13,8 @@ export type IndicatorTransformResult = {
 };
 
 export abstract class Indicator {
+    public abstract get name(): string;
+
     public abstract transform(
         chartResult: ChartResultArrayDto
     ): IndicatorTransformResult;

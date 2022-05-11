@@ -34,11 +34,13 @@
 
     <ng-template #loaded>
         <div *ngIf="(chartResult$ | async) !== null; else noData">
-            <sic-formula-chart
-                *ngFor="let panel of panels"
-                [chartResult]="chartResult$ | async"
-                [indicators]="panel.indicators"
-            ></sic-formula-chart>
+            <ng-container *ngFor="let panel of panels">
+                <sic-formula-chart
+                    [chartResult]="chartResult$ | async"
+                    [indicators]="panel.indicators"
+                ></sic-formula-chart>
+                <mat-divider></mat-divider>
+            </ng-container>
         </div>
 
         <ng-template #noData>

@@ -2,6 +2,10 @@ import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
 
 export class VolumeIndicator extends Indicator {
+    public get name(): string {
+        return 'Volume';
+    }
+
     public transform(
         chartResult: ChartResultArrayDto
     ): IndicatorTransformResult {
