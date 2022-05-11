@@ -33,8 +33,14 @@
     </div>
 
     <div [hidden]="isLoading$ | async">
-        <canvas [hidden]="(hasChart$ | async) === false" #chart></canvas>
-        <div [hidden]="hasChart$ | async">
+        <div [hidden]="(chartResult$ | async) === null">
+            <sic-formula-chart
+                *ngFor="let panel of panels"
+                [chartResult]="chartResult$ | async"
+                [indicators]="panel.indicators"
+            ></sic-formula-chart>
+        </div>
+        <div [hidden]="chartResult$ | async">
             <p *ngIf="(chartError$ | async) === null" class="no-data">
                 No data.
             </p>

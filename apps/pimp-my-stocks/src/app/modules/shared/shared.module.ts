@@ -20,9 +20,15 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { FormulaChartComponent } from './components/formula-chart/formula-chart.component';
 
 @NgModule({
-    declarations: [ChartComponent, QuoteSearchComponent, QuoteDetailsComponent],
+    declarations: [
+        ChartComponent,
+        QuoteSearchComponent,
+        QuoteDetailsComponent,
+        FormulaChartComponent,
+    ],
     imports: [
         CommonModule,
         FormsModule,
@@ -62,6 +68,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
         MatCardModule,
         MatDividerModule,
         MatProgressBarModule,
+        FormulaChartComponent,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr' }],
 })

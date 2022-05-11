@@ -8,7 +8,7 @@ import {
     OnInit,
     OnDestroy,
 } from '@angular/core';
-import { ApiService } from '../../../../core/api/services';
+import { ApiService } from '@app/core/api/services';
 import Chart, {
     ChartConfiguration,
     ChartData,
@@ -19,13 +19,23 @@ import {
     BehaviorSubject,
     firstValueFrom,
     Observable,
+    ReplaySubject,
     Subscription,
 } from 'rxjs';
-import { ChartResultArrayDto } from '../../../../core/api/models/chart-result-array-dto';
+import { ChartResultArrayDto } from '@app/core/api/models/chart-result-array-dto';
 import { ChartInterval, CHART_INTERVALS } from '@sic/api-interfaces';
 import { FormControl } from '@angular/forms';
-import { isBeforeDateValidator } from '../../../../core/validators/before-date';
+import { isBeforeDateValidator } from '@app/core/validators/before-date';
 import { HttpErrorResponse } from '@angular/common/http';
+import { VolumeIndicator } from '@app/core/indicators/volume';
+import { PriceIndicator } from '@app/core/indicators/price';
+import {
+    Indicator,
+    IndicatorTransformResult,
+} from '@app/core/indicators/indicator';
+import { ChartPanel } from '@app/core/models/chart-panel';
+import { OnBalanceVolumeIndicator } from '@app/core/indicators/on-balance-volume';
+import { ChartResultArrayQuoteDto } from '@app/core/api/models';
 
 @Component({
     selector: 'sic-chart',
@@ -34,19 +44,11 @@ import { HttpErrorResponse } from '@angular/common/http';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('chart') canvas?: ElementRef<HTMLCanvasElement>;
-
     private _symbol: string | null = null;
     @Input() set symbol(value: string | null) {
         this._symbol = value;
         this.updateChart();
     }
-
-    private chart: Chart | null = null;
-    private hasChart: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-        false
-    );
-    public hasChart$: Observable<boolean> = this.hasChart.asObservable();
 
     public intervalControl: FormControl = new FormControl(
         '1mo' as ChartInterval
@@ -55,6 +57,11 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         DateTime.now().minus({ years: 1 }),
         isBeforeDateValidator(DateTime.now())
     );
+
+    private chartResult: ReplaySubject<ChartResultArrayDto | null> =
+        new ReplaySubject<ChartResultArrayDto | null>();
+    public chartResult$: Observable<ChartResultArrayDto | null> =
+        this.chartResult.asObservable();
 
     private chartError: BehaviorSubject<string | null> = new BehaviorSubject<
         string | null
@@ -70,6 +77,11 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     public isLoading$: Observable<boolean> = this.isLoading.asObservable();
 
     private subscriptions: Subscription = new Subscription();
+
+    public panels: ChartPanel[] = [
+        new ChartPanel([new PriceIndicator(), new VolumeIndicator()]),
+        new ChartPanel([new OnBalanceVolumeIndicator()]),
+    ];
 
     constructor(private readonly apiService: ApiService) {}
 
@@ -95,30 +107,13 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private async updateChart(): Promise<void> {
         this.isLoading.next(true);
-        await this.redrawChart();
+        await this.getChartData();
         this.isLoading.next(false);
     }
 
-    private async redrawChart(): Promise<void> {
-        this.hasChart.next(false);
+    private async getChartData(): Promise<void> {
+        this.chartResult.next(null);
         this.chartError.next(null);
-
-        if (this.canvas === undefined) {
-            return;
-        }
-
-        const ctx: CanvasRenderingContext2D | null =
-            this.canvas.nativeElement.getContext('2d');
-
-        if (ctx === null) {
-            return;
-        }
-
-        // Reset the chart
-        if (this.chart != null) {
-            this.chart.destroy();
-            this.chart = null;
-        }
 
         if (this._symbol === null) {
             return;
@@ -156,58 +151,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
 
-        // Draw chart on the canvas
-        const maxVolume = Math.max(...chartData.quotes.map((s) => s.volume));
-        const data: ChartData<keyof ChartTypeRegistry, number[], string> = {
-            labels: chartData.quotes.map((s) =>
-                DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
-            ),
-            datasets: [
-                {
-                    type: 'line',
-                    label: `Price (${chartData.meta.currency})`,
-                    data: chartData.quotes.map((s) => s.close),
-                    fill: false,
-                    borderColor: 'rgb(54, 162, 235)',
-                    yAxisID: 'price-y-axis',
-                },
-                {
-                    type: 'bar',
-                    label: 'Volume',
-                    data: chartData.quotes.map((s) => s.volume),
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: 'volume-y-axis',
-                },
-            ],
-        };
-
-        const config: ChartConfiguration<
-            keyof ChartTypeRegistry,
-            number[],
-            string
-        > = {
-            type: 'line',
-            data: data,
-            options: {
-                scales: {
-                    'price-y-axis': {
-                        type: 'linear',
-                        axis: 'y',
-                        position: 'right',
-                    },
-                    'volume-y-axis': {
-                        type: 'linear',
-                        axis: 'y',
-                        display: false,
-                        max: maxVolume * 3,
-                    },
-                },
-            },
-        };
-
-        this.chart = new Chart(ctx, config);
-        this.hasChart.next(true);
+        this.chartResult.next(chartData);
     }
 
     ngOnDestroy(): void {

@@ -7,7 +7,6 @@ import {
     EventEmitter,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatAutocompleteActivatedEvent } from '@angular/material/autocomplete';
 import {
     BehaviorSubject,
     debounceTime,
@@ -16,8 +15,8 @@ import {
     Observable,
     Subscription,
 } from 'rxjs';
-import { SearchQuoteDto } from '../../../../core/api/models';
-import { ApiService } from '../../../../core/api/services';
+import { SearchQuoteDto } from '@app/core/api/models';
+import { ApiService } from '@app/core/api/services';
 
 @Component({
     selector: 'sic-quote-search',
