@@ -8,8 +8,8 @@ export class PriceIndicator extends Indicator {
 
     public transform(
         chartResult: ChartResultArrayDto
-    ): IndicatorTransformResult {
-        return {
+    ): Promise<IndicatorTransformResult> {
+        return Promise.resolve({
             dataset: {
                 type: 'line',
                 label: `Price (${chartResult.meta.currency})`,
@@ -17,6 +17,7 @@ export class PriceIndicator extends Indicator {
                 fill: false,
                 borderColor: 'rgb(54, 162, 235)',
                 yAxisID: 'price-y-axis',
+                pointRadius: 0,
             },
             options: {
                 scales: {
@@ -27,6 +28,6 @@ export class PriceIndicator extends Indicator {
                     },
                 },
             },
-        };
+        });
     }
 }

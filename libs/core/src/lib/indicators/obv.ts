@@ -1,35 +1,38 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
+import * as ta from 'ta.web';
 
-export class VolumeIndicator extends Indicator {
+export class OnBalanceVolumeIndicator extends Indicator {
     public get name(): string {
-        return 'Volume';
+        return 'OBV';
     }
 
-    public transform(
+    public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
-        const maxVolume = Math.max(...chartResult.quotes.map((s) => s.volume));
-
-        return Promise.resolve({
+        return {
             dataset: {
-                type: 'bar',
-                label: 'Volume',
-                data: chartResult.quotes.map((s) => s.volume),
+                type: 'line',
+                label: 'OBV',
+                data: await ta.obv(
+                    chartResult.quotes.map((quote) => [
+                        quote.volume,
+                        quote.close,
+                    ])
+                ),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                yAxisID: 'volume-y-axis',
+                yAxisID: 'obv-y-axis',
             },
             options: {
                 scales: {
-                    'volume-y-axis': {
+                    'obv-y-axis': {
                         type: 'linear',
                         axis: 'y',
                         display: false,
-                        max: maxVolume * 3,
                     },
                 },
             },
-        });
+        };
     }
 }

@@ -1,35 +1,35 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
+import * as ta from 'ta.web';
 
-export class VolumeIndicator extends Indicator {
+export class RelativeStrengthIndexIndicator extends Indicator {
     public get name(): string {
-        return 'Volume';
+        return 'RSI';
     }
 
-    public transform(
+    public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
-        const maxVolume = Math.max(...chartResult.quotes.map((s) => s.volume));
-
-        return Promise.resolve({
+        return {
             dataset: {
-                type: 'bar',
-                label: 'Volume',
-                data: chartResult.quotes.map((s) => s.volume),
+                type: 'line',
+                label: 'RSI',
+                data: await ta.rsi(
+                    chartResult.quotes.map((quote) => quote.close)
+                ),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                yAxisID: 'volume-y-axis',
+                yAxisID: 'RSI-y-axis',
             },
             options: {
                 scales: {
-                    'volume-y-axis': {
+                    'RSI-y-axis': {
                         type: 'linear',
                         axis: 'y',
-                        display: false,
-                        max: maxVolume * 3,
+                        display: true,
                     },
                 },
             },
-        });
+        };
     }
 }

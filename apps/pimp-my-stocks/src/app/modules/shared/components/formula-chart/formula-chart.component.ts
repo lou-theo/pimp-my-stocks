@@ -84,14 +84,20 @@ export class FormulaChartComponent implements AfterViewInit {
             return;
         }
 
-        const results: IndicatorTransformResult[] = [];
+        const promises: Promise<IndicatorTransformResult>[] = [];
 
         for (const indicator of this.panel.indicators) {
-            results.push(indicator.transform(this.chartResult));
+            promises.push(indicator.transform(this.chartResult));
         }
 
+        const results: IndicatorTransformResult[] = await Promise.all(promises);
+
         // Draw chart on the canvas
-        const data: ChartData<keyof ChartTypeRegistry, number[], string> = {
+        const data: ChartData<
+            keyof ChartTypeRegistry,
+            (number | null)[],
+            string
+        > = {
             labels: this.chartResult.quotes.map((s) =>
                 DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
             ),
@@ -102,7 +108,7 @@ export class FormulaChartComponent implements AfterViewInit {
 
         const config: ChartConfiguration<
             keyof ChartTypeRegistry,
-            number[],
+            (number | null)[],
             string
         > = {
             type: 'line',

@@ -1,0 +1,19 @@
+{
+  "name": "ta.web",
+  "version": "1.10.3",
+  "description": "React compatible ta.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bitvested/ta.web.git"
+  },
+  "author": "Nino Kroesen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Bitvested/ta.web/issues"
+  },
+  "homepage": "https://github.com/Bitvested/ta.web#readme"
+}

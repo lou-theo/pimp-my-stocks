@@ -8,7 +8,7 @@ type Configuration = ChartConfiguration<
 >;
 
 export type IndicatorTransformResult = {
-    dataset: ChartDataset<keyof ChartTypeRegistry, number[]>;
+    dataset: ChartDataset<keyof ChartTypeRegistry, (number | null)[]>;
     options: Configuration['options'];
 };
 
@@ -17,5 +17,5 @@ export abstract class Indicator {
 
     public abstract transform(
         chartResult: ChartResultArrayDto
-    ): IndicatorTransformResult;
+    ): Promise<IndicatorTransformResult>;
 }
