@@ -68,8 +68,8 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptions: Subscription = new Subscription();
 
     public panels: ChartPanel[] = [
-        new ChartPanel([new PriceIndicator(), new VolumeIndicator()]),
-        new ChartPanel([new OnBalanceVolumeIndicator()]),
+        new ChartPanel(1, [new PriceIndicator(), new VolumeIndicator()]),
+        new ChartPanel(2, [new OnBalanceVolumeIndicator()]),
     ];
 
     constructor(private readonly apiService: ApiService) {}
@@ -141,6 +141,19 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this.chartResult.next(chartData);
+    }
+
+    public addPanel(panel: ChartPanel): void {
+        const panelIndex: number = this.panels.indexOf(panel);
+        const newId: number = Math.max(...this.panels.map((p) => p.id)) + 1;
+        this.panels.splice(panelIndex + 1, 0, new ChartPanel(newId, []));
+        this.panels = [...this.panels];
+    }
+
+    public removePanel(panel: ChartPanel): void {
+        const panelIndex: number = this.panels.indexOf(panel);
+        this.panels.splice(panelIndex, 1);
+        this.panels = [...this.panels];
     }
 
     ngOnDestroy(): void {

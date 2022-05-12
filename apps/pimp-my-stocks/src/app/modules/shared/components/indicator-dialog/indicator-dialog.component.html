@@ -1,23 +1,21 @@
 <h1 mat-dialog-title>Indicateurs</h1>
 <div mat-dialog-content>
-    <mat-radio-group
-        [formControl]="selectedIndicatorControl"
-        fxLayout="column"
-        fxLayoutAlign="start start"
-        fxLayoutGap="15px"
-    >
-        <mat-radio-button
-            *ngFor="let indicator of indicators"
-            [value]="indicator"
-            >{{ indicator.name }}</mat-radio-button
+    <section>
+        <p
+            formArraryName="indicators"
+            *ngFor="let indicator of INDICATORS; let i = index"
         >
-    </mat-radio-group>
+            <mat-checkbox [formControl]="getControlAt(i)">{{
+                indicator.name
+            }}</mat-checkbox>
+        </p>
+    </section>
 </div>
 <div mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Annuler</button>
     <button
         mat-button
-        [mat-dialog-close]="selectedIndicatorControl.value"
+        [mat-dialog-close]="getSelectedIndicators()"
         cdkFocusInitial
     >
         Ok

@@ -37,7 +37,10 @@
             <ng-container *ngFor="let panel of panels">
                 <sic-formula-chart
                     [chartResult]="chartResult$ | async"
-                    [indicators]="panel.indicators"
+                    [panel]="panel"
+                    [canDelete]="panels.length > 1"
+                    (addClicked)="addPanel(panel)"
+                    (deleteClicked)="removePanel(panel)"
                 ></sic-formula-chart>
                 <mat-divider></mat-divider>
             </ng-container>

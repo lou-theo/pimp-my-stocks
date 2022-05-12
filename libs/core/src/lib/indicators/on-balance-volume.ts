@@ -30,6 +30,7 @@ export class OnBalanceVolumeIndicator extends Indicator {
                     'obv-y-axis': {
                         type: 'linear',
                         axis: 'y',
+                        display: false,
                     },
                 },
             },

@@ -5,6 +5,8 @@ import {
     ViewChild,
     ElementRef,
     AfterViewInit,
+    Output,
+    EventEmitter,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from '@sic/core/indicators';
@@ -17,6 +19,7 @@ import { DateTime } from 'luxon';
 import * as merge from 'deepmerge';
 import { MatDialog } from '@angular/material/dialog';
 import { IndicatorDialogComponent } from '../indicator-dialog/indicator-dialog.component';
+import { ChartPanel } from '@sic/core/models';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -27,14 +30,14 @@ import { IndicatorDialogComponent } from '../indicator-dialog/indicator-dialog.c
 export class FormulaChartComponent implements AfterViewInit {
     @ViewChild('chart') canvas?: ElementRef<HTMLCanvasElement>;
 
-    private _indicators: Indicator[] = [];
+    private _panel: ChartPanel = new ChartPanel(0, []);
     @Input()
-    set indicators(value: Indicator[]) {
-        this._indicators = value;
+    set panel(value: ChartPanel) {
+        this._panel = value;
         this.redrawChart();
     }
-    get indicators(): Indicator[] {
-        return this._indicators;
+    get panel(): ChartPanel {
+        return this._panel;
     }
 
     private _chartResult: ChartResultArrayDto | null = null;
@@ -45,6 +48,11 @@ export class FormulaChartComponent implements AfterViewInit {
     get chartResult(): ChartResultArrayDto | null {
         return this._chartResult;
     }
+
+    @Input() canDelete = true;
+
+    @Output() addClicked: EventEmitter<void> = new EventEmitter<void>();
+    @Output() deleteClicked: EventEmitter<void> = new EventEmitter<void>();
 
     private chart: Chart | null = null;
 
@@ -78,7 +86,7 @@ export class FormulaChartComponent implements AfterViewInit {
 
         const results: IndicatorTransformResult[] = [];
 
-        for (const indicator of this.indicators) {
+        for (const indicator of this.panel.indicators) {
             results.push(indicator.transform(this.chartResult));
         }
 
@@ -108,15 +116,16 @@ export class FormulaChartComponent implements AfterViewInit {
     openDialog(): void {
         const dialogRef = this.dialog.open(IndicatorDialogComponent, {
             width: '250px',
-            data: this.indicators,
+            data: this.panel.indicators,
         });
 
-        dialogRef.afterClosed().subscribe((result: Indicator | undefined) => {
+        dialogRef.afterClosed().subscribe((result: Indicator[] | undefined) => {
             if (result === undefined) {
                 return;
             }
 
-            this.indicators = [...this.indicators, result];
+            this.panel.indicators = result;
+            this.redrawChart();
         });
     }
 }

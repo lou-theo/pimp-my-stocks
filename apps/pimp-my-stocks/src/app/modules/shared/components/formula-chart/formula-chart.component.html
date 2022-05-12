@@ -7,11 +7,11 @@
             <mat-icon>edit</mat-icon>
             <span>Modifier les indicateurs</span>
         </button>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="addClicked.emit()">
             <mat-icon>add</mat-icon>
-            <span>Ajouter un graphique</span>
+            <span>Ajouter un graphique en dessous</span>
         </button>
-        <button mat-menu-item>
+        <button *ngIf="canDelete" mat-menu-item (click)="deleteClicked.emit()">
             <mat-icon>close</mat-icon>
             <span>Supprimer ce graphique</span>
         </button>

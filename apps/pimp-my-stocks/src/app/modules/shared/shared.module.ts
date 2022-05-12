@@ -26,6 +26,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { IndicatorDialogComponent } from './components/indicator-dialog/indicator-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @NgModule({
     declarations: [
@@ -57,6 +58,7 @@ import { MatRadioModule } from '@angular/material/radio';
         MatButtonModule,
         MatDialogModule,
         MatRadioModule,
+        MatCheckboxModule,
     ],
     exports: [
         CommonModule,
@@ -84,6 +86,7 @@ import { MatRadioModule } from '@angular/material/radio';
         MatDialogModule,
         IndicatorDialogComponent,
         MatRadioModule,
+        MatCheckboxModule,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr' }],
 })
