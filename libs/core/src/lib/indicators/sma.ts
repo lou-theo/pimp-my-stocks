@@ -18,6 +18,10 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
         return 'sma';
     }
 
+    public get label(): string {
+        return 'SMA (14)';
+    }
+
     constructor(
         protected override configuration: SimpleMovingAverageIndicatorConfiguration
     ) {
@@ -48,7 +52,7 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
             datasets: [
                 {
                     type: 'line',
-                    label: 'SMA',
+                    label: this.label,
                     data: await this.calculate(chartResult),
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',

@@ -7,6 +7,10 @@ export class OnBalanceVolumeIndicator extends Indicator<number[]> {
         return 'obv';
     }
 
+    public get label(): string {
+        return 'OBV';
+    }
+
     constructor() {
         super({});
     }
@@ -28,7 +32,7 @@ export class OnBalanceVolumeIndicator extends Indicator<number[]> {
             datasets: [
                 {
                     type: 'line',
-                    label: 'OBV',
+                    label: this.label,
                     data: await this.calculate(chartResult),
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',

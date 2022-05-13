@@ -9,11 +9,7 @@ import {
     EventEmitter,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import {
-    BaseIndicator,
-    Indicator,
-    IndicatorTransformResult,
-} from '@sic/core/indicators';
+import { BaseIndicator, IndicatorTransformResult } from '@sic/core/indicators';
 import Chart, {
     ChartConfiguration,
     ChartData,
@@ -24,6 +20,7 @@ import * as merge from 'deepmerge';
 import { MatDialog } from '@angular/material/dialog';
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
 import { ChartPanel } from '@sic/core/models';
+import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -143,6 +140,26 @@ export class FormulaChartComponent implements AfterViewInit {
                 }
 
                 this.panel.indicators = [...this.panel.indicators, ...result];
+                this.redrawChart();
+            });
+    }
+
+    openRemoveDialog(): void {
+        const dialogRef = this.dialog.open(RemoveIndicatorsDialogComponent, {
+            width: '80%',
+            data: this.panel.indicators,
+        });
+
+        dialogRef
+            .afterClosed()
+            .subscribe((result: BaseIndicator[] | undefined) => {
+                if (result === undefined) {
+                    return;
+                }
+
+                this.panel.indicators = this.panel.indicators.filter(
+                    (i) => !result.includes(i)
+                );
                 this.redrawChart();
             });
     }

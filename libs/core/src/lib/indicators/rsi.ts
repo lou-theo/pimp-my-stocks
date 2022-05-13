@@ -18,6 +18,10 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
         return 'rsi';
     }
 
+    public get label(): string {
+        return 'RSI (14)';
+    }
+
     constructor() {
         super({});
     }
@@ -38,7 +42,7 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
             datasets: [
                 {
                     type: 'line',
-                    label: 'RSI',
+                    label: this.label,
                     data: result,
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',

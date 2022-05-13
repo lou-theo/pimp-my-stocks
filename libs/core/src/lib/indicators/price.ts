@@ -6,6 +6,10 @@ export class PriceIndicator extends Indicator<number[]> {
         return 'price';
     }
 
+    public get label(): string {
+        return 'Price';
+    }
+
     constructor() {
         super({});
     }
@@ -23,7 +27,7 @@ export class PriceIndicator extends Indicator<number[]> {
             datasets: [
                 {
                     type: 'line',
-                    label: `Price (${chartResult.meta.currency})`,
+                    label: `${this.label} (${chartResult.meta.currency})`,
                     data: await this.calculate(chartResult),
                     fill: false,
                     borderColor: 'rgb(54, 162, 235)',

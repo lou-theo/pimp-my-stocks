@@ -24,6 +24,11 @@ export abstract class BaseIndicator {
      */
     public abstract get identifier(): string;
 
+    /**
+     * Get the label shown in the chart.
+     */
+    public abstract get label(): string;
+
     constructor(protected configuration: IndicatorConfiguration) {}
 
     /**

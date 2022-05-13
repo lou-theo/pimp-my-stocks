@@ -6,6 +6,10 @@ export class VolumeIndicator extends Indicator<number[]> {
         return 'volume';
     }
 
+    public get label(): string {
+        return 'Volume';
+    }
+
     constructor() {
         super({});
     }
@@ -25,7 +29,7 @@ export class VolumeIndicator extends Indicator<number[]> {
             datasets: [
                 {
                     type: 'bar',
-                    label: 'Volume',
+                    label: this.label,
                     data: result,
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',

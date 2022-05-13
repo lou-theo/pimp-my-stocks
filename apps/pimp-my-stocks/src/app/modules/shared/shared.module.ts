@@ -30,6 +30,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { QuoteEquityDetailsComponent } from './components/quote-equity-details/quote-equity-details.component';
 import { QuoteCryptocurrencyDetailComponent } from './components/quote-cryptocurrency-detail/quote-cryptocurrency-detail.component';
 import { QuoteEtfDetailsComponent } from './components/quote-etf-details/quote-etf-details.component';
+import { RemoveIndicatorsDialogComponent } from './components/remove-indicators-dialog/remove-indicators-dialog.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { QuoteEtfDetailsComponent } from './components/quote-etf-details/quote-e
         QuoteEquityDetailsComponent,
         QuoteCryptocurrencyDetailComponent,
         QuoteEtfDetailsComponent,
+        RemoveIndicatorsDialogComponent,
     ],
     imports: [
         CommonModule,
