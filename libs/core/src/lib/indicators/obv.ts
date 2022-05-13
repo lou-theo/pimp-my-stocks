@@ -3,13 +3,19 @@ import { Indicator, IndicatorTransformResult } from './indicator';
 import * as ta from 'ta.web';
 
 export class OnBalanceVolumeIndicator extends Indicator {
-    public get name(): string {
-        return 'OBV';
+    public get identifier(): string {
+        return 'obv';
+    }
+
+    constructor() {
+        super({});
     }
 
     public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
+        const yAxis = `${this.identifier}-y-axis`;
+
         return {
             dataset: {
                 type: 'line',
@@ -22,11 +28,11 @@ export class OnBalanceVolumeIndicator extends Indicator {
                 ),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                yAxisID: 'obv-y-axis',
+                yAxisID: yAxis,
             },
             options: {
                 scales: {
-                    'obv-y-axis': {
+                    [yAxis]: {
                         type: 'linear',
                         axis: 'y',
                         display: false,

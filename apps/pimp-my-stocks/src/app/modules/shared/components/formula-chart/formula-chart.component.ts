@@ -121,7 +121,7 @@ export class FormulaChartComponent implements AfterViewInit {
 
     openDialog(): void {
         const dialogRef = this.dialog.open(IndicatorDialogComponent, {
-            width: '250px',
+            width: '80%',
             data: this.panel.indicators,
         });
 

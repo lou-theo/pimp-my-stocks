@@ -1,7 +1,8 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Indicator, INDICATORS } from '@sic/core/indicators';
+import { Indicator, IndicatorFactory, INDICATORS } from '@sic/core/indicators';
+import { notUndefined } from '@sic/core/utils';
 
 @Component({
     selector: 'sic-indicator-dialog',
@@ -13,24 +14,36 @@ export class IndicatorDialogComponent {
     public selectedIndicatorsControl: FormArray;
 
     public INDICATORS = INDICATORS;
+    private flattenedIndicators: {
+        index: number;
+        factory: IndicatorFactory;
+    }[] = [];
 
     constructor(
         private readonly fb: FormBuilder,
         public dialogRef: MatDialogRef<IndicatorDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: Indicator[]
     ) {
-        const alreadySelectedIndicators: string[] = data.map((i) => i.name);
-
-        const options: boolean[] = INDICATORS.map((indicator) =>
-            alreadySelectedIndicators.includes(indicator.name)
-        );
+        let i = 0;
+        for (const category of INDICATORS) {
+            for (const indicator of category.indicators) {
+                this.flattenedIndicators.push({
+                    index: i,
+                    factory: indicator,
+                });
+                i++;
+            }
+        }
 
         this.selectedIndicatorsControl = this.fb.array(
-            options.map((selected) => new FormControl(selected))
+            this.flattenedIndicators.map(() => new FormControl())
         );
     }
 
-    public getControlAt(index: number): FormControl {
+    public getControlFor(name: string): FormControl {
+        const index =
+            this.flattenedIndicators.find((i) => i.factory.displayName === name)
+                ?.index ?? -1;
         return this.selectedIndicatorsControl.at(index) as FormControl;
     }
 
@@ -43,7 +56,12 @@ export class IndicatorDialogComponent {
 
         return selectedIndices
             .filter((value) => value.selected)
-            .map((value) => INDICATORS[value.index]);
+            .map((value) =>
+                this.flattenedIndicators
+                    .find((i) => i.index === value.index)
+                    ?.factory?.createIndicator()
+            )
+            .filter(notUndefined);
     }
 
     onNoClick(): void {

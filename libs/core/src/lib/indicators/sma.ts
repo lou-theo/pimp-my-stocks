@@ -1,18 +1,38 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import { Indicator, IndicatorTransformResult } from './indicator';
+import {
+    Indicator,
+    IndicatorConfiguration,
+    IndicatorTransformResult,
+} from './indicator';
 import * as ta from 'ta.web';
+import { notNull } from '../utils';
+
+export type SimpleMovingAverageIndicatorConfiguration =
+    IndicatorConfiguration & {
+        sourceIndicator: Indicator;
+        length?: number | undefined;
+    };
 
 export class SimpleMovingAverageIndicator extends Indicator {
-    public get name(): string {
-        return 'SMA';
+    public get identifier(): string {
+        return 'sma';
+    }
+
+    constructor(
+        protected override configuration: SimpleMovingAverageIndicatorConfiguration
+    ) {
+        super(configuration);
     }
 
     public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
+        const sourceData: number[] = (
+            await this.configuration.sourceIndicator.transform(chartResult)
+        ).dataset.data.filter(notNull);
         const result: (number | null)[] = await ta.sma(
-            chartResult.quotes.map((quote) => quote.close),
-            7
+            sourceData,
+            this.configuration.length
         );
 
         const missingValues = chartResult.quotes.length - result.length;
@@ -26,7 +46,7 @@ export class SimpleMovingAverageIndicator extends Indicator {
                 data: result,
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                yAxisID: 'price-y-axis',
+                yAxisID: `${this.configuration.sourceIndicator}-y-axis`,
             },
             options: {},
         };

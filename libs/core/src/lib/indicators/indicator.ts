@@ -12,8 +12,14 @@ export type IndicatorTransformResult = {
     options: Configuration['options'];
 };
 
+export type IndicatorConfiguration = {
+    [key: string]: unknown;
+};
+
 export abstract class Indicator {
-    public abstract get name(): string;
+    public abstract get identifier(): string;
+
+    constructor(protected configuration: IndicatorConfiguration) {}
 
     public abstract transform(
         chartResult: ChartResultArrayDto

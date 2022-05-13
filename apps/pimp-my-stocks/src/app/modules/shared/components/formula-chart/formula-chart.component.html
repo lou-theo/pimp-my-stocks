@@ -2,11 +2,26 @@
     <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
     </button>
+
     <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="openDialog()">
-            <mat-icon>edit</mat-icon>
-            <span>Modifier les indicateurs</span>
+        <button mat-menu-item [matMenuTriggerFor]="indicators">
+            Indicateurs
         </button>
+        <button mat-menu-item [matMenuTriggerFor]="panels">Graphiques</button>
+    </mat-menu>
+
+    <mat-menu #indicators="matMenu">
+        <button mat-menu-item (click)="openDialog()">
+            <mat-icon>add</mat-icon>
+            <span>Ajouter des indicateurs</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon>close</mat-icon>
+            <span>Supprimer des indicateurs</span>
+        </button>
+    </mat-menu>
+
+    <mat-menu #panels="matMenu">
         <button mat-menu-item (click)="addClicked.emit()">
             <mat-icon>add</mat-icon>
             <span>Ajouter un graphique en dessous</span>
