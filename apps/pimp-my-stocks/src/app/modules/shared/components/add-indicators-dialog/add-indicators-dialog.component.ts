@@ -1,16 +1,19 @@
-import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Indicator, IndicatorFactory, INDICATORS } from '@sic/core/indicators';
+import { MatDialogRef } from '@angular/material/dialog';
+import {
+    BaseIndicator,
+    IndicatorFactory,
+    INDICATORS,
+} from '@sic/core/indicators';
 import { notUndefined } from '@sic/core/utils';
 
 @Component({
-    selector: 'sic-indicator-dialog',
-    templateUrl: './indicator-dialog.component.html',
-    styleUrls: ['./indicator-dialog.component.scss'],
+    templateUrl: './add-indicators-dialog.component.html',
+    styleUrls: ['./add-indicators-dialog.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IndicatorDialogComponent {
+export class AddIndicatorDialogComponent {
     public selectedIndicatorsControl: FormArray;
 
     public INDICATORS = INDICATORS;
@@ -21,8 +24,7 @@ export class IndicatorDialogComponent {
 
     constructor(
         private readonly fb: FormBuilder,
-        public dialogRef: MatDialogRef<IndicatorDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: Indicator[]
+        public dialogRef: MatDialogRef<AddIndicatorDialogComponent>
     ) {
         let i = 0;
         for (const category of INDICATORS) {
@@ -47,7 +49,7 @@ export class IndicatorDialogComponent {
         return this.selectedIndicatorsControl.at(index) as FormControl;
     }
 
-    public getSelectedIndicators(): Indicator[] {
+    public getSelectedIndicators(): BaseIndicator[] {
         const selectedIndices: { selected: boolean; index: number }[] = (
             this.selectedIndicatorsControl.value as boolean[]
         ).map((value, index) => {

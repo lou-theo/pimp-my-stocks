@@ -9,7 +9,11 @@ import {
     EventEmitter,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import { Indicator, IndicatorTransformResult } from '@sic/core/indicators';
+import {
+    BaseIndicator,
+    Indicator,
+    IndicatorTransformResult,
+} from '@sic/core/indicators';
 import Chart, {
     ChartConfiguration,
     ChartData,
@@ -18,7 +22,7 @@ import Chart, {
 import { DateTime } from 'luxon';
 import * as merge from 'deepmerge';
 import { MatDialog } from '@angular/material/dialog';
-import { IndicatorDialogComponent } from '../indicator-dialog/indicator-dialog.component';
+import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
 import { ChartPanel } from '@sic/core/models';
 
 @Component({
@@ -91,6 +95,13 @@ export class FormulaChartComponent implements AfterViewInit {
         }
 
         const results: IndicatorTransformResult[] = await Promise.all(promises);
+        const datasets = [];
+
+        for (const result of results) {
+            for (const dataset of result.datasets) {
+                datasets.push(dataset);
+            }
+        }
 
         // Draw chart on the canvas
         const data: ChartData<
@@ -101,7 +112,7 @@ export class FormulaChartComponent implements AfterViewInit {
             labels: this.chartResult.quotes.map((s) =>
                 DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
             ),
-            datasets: results.map((i) => i.dataset),
+            datasets: datasets,
         };
 
         const mergedOption = merge.all(results.map((i) => i.options as object));
@@ -119,19 +130,20 @@ export class FormulaChartComponent implements AfterViewInit {
         this.chart = new Chart(ctx, config);
     }
 
-    openDialog(): void {
-        const dialogRef = this.dialog.open(IndicatorDialogComponent, {
+    openAddDialog(): void {
+        const dialogRef = this.dialog.open(AddIndicatorDialogComponent, {
             width: '80%',
-            data: this.panel.indicators,
         });
 
-        dialogRef.afterClosed().subscribe((result: Indicator[] | undefined) => {
-            if (result === undefined) {
-                return;
-            }
+        dialogRef
+            .afterClosed()
+            .subscribe((result: BaseIndicator[] | undefined) => {
+                if (result === undefined) {
+                    return;
+                }
 
-            this.panel.indicators = result;
-            this.redrawChart();
-        });
+                this.panel.indicators = [...this.panel.indicators, ...result];
+                this.redrawChart();
+            });
     }
 }

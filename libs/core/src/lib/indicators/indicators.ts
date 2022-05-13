@@ -1,4 +1,4 @@
-import { Indicator } from './indicator';
+import { BaseIndicator } from './indicator';
 import { OnBalanceVolumeIndicator } from './obv';
 import { PriceIndicator } from './price';
 import { RelativeStrengthIndexIndicator } from './rsi';
@@ -12,7 +12,7 @@ export type IndicatorCategory = {
 
 export type IndicatorFactory = {
     displayName: string;
-    createIndicator: () => Indicator;
+    createIndicator: () => BaseIndicator;
 };
 
 export const INDICATORS: IndicatorCategory[] = [

@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IndicatorDialogComponent } from './indicator-dialog.component';
+import { AddIndicatorDialogComponent } from './add-indicators-dialog.component';
 
 describe('IndicatorDialogComponent', () => {
-    let component: IndicatorDialogComponent;
-    let fixture: ComponentFixture<IndicatorDialogComponent>;
+    let component: AddIndicatorDialogComponent;
+    let fixture: ComponentFixture<AddIndicatorDialogComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [IndicatorDialogComponent],
+            declarations: [AddIndicatorDialogComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(IndicatorDialogComponent);
+        fixture = TestBed.createComponent(AddIndicatorDialogComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

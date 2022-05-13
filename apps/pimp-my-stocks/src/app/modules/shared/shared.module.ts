@@ -24,7 +24,7 @@ import { FormulaChartComponent } from './components/formula-chart/formula-chart.
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { IndicatorDialogComponent } from './components/indicator-dialog/indicator-dialog.component';
+import { AddIndicatorDialogComponent } from './components/add-indicators-dialog/add-indicators-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { QuoteEquityDetailsComponent } from './components/quote-equity-details/quote-equity-details.component';
@@ -37,7 +37,7 @@ import { QuoteEtfDetailsComponent } from './components/quote-etf-details/quote-e
         QuoteSearchComponent,
         QuoteDetailsComponent,
         FormulaChartComponent,
-        IndicatorDialogComponent,
+        AddIndicatorDialogComponent,
         QuoteEquityDetailsComponent,
         QuoteCryptocurrencyDetailComponent,
         QuoteEtfDetailsComponent,
@@ -90,7 +90,7 @@ import { QuoteEtfDetailsComponent } from './components/quote-etf-details/quote-e
         MatMenuModule,
         MatButtonModule,
         MatDialogModule,
-        IndicatorDialogComponent,
+        AddIndicatorDialogComponent,
         MatRadioModule,
         MatCheckboxModule,
     ],

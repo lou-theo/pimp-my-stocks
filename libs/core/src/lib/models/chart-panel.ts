@@ -1,8 +1,8 @@
-import { Indicator } from '../indicators/indicator';
+import { BaseIndicator } from '../indicators/indicator';
 
 export class ChartPanel {
     constructor(
         public readonly id: number,
-        public indicators: Indicator[] = []
+        public indicators: BaseIndicator[] = []
     ) {}
 }

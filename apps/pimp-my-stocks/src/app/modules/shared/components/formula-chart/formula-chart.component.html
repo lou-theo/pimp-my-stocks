@@ -11,13 +11,17 @@
     </mat-menu>
 
     <mat-menu #indicators="matMenu">
-        <button mat-menu-item (click)="openDialog()">
+        <button mat-menu-item (click)="openAddDialog()">
             <mat-icon>add</mat-icon>
             <span>Ajouter des indicateurs</span>
         </button>
         <button mat-menu-item>
             <mat-icon>close</mat-icon>
             <span>Supprimer des indicateurs</span>
+        </button>
+        <button mat-menu-item>
+            <mat-icon>settings</mat-icon>
+            <span>Paramètres des indicateurs</span>
         </button>
     </mat-menu>
 

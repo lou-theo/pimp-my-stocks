@@ -2,7 +2,7 @@ import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { Indicator, IndicatorTransformResult } from './indicator';
 import * as ta from 'ta.web';
 
-export class OnBalanceVolumeIndicator extends Indicator {
+export class OnBalanceVolumeIndicator extends Indicator<number[]> {
     public get identifier(): string {
         return 'obv';
     }
@@ -11,25 +11,32 @@ export class OnBalanceVolumeIndicator extends Indicator {
         super({});
     }
 
+    public async calculate(
+        chartResult: ChartResultArrayDto
+    ): Promise<number[]> {
+        return await ta.obv(
+            chartResult.quotes.map((quote) => [quote.volume, quote.close])
+        );
+    }
+
     public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
         const yAxis = `${this.identifier}-y-axis`;
 
         return {
-            dataset: {
-                type: 'line',
-                label: 'OBV',
-                data: await ta.obv(
-                    chartResult.quotes.map((quote) => [
-                        quote.volume,
-                        quote.close,
-                    ])
-                ),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                yAxisID: yAxis,
-            },
+            datasets: [
+                {
+                    type: 'line',
+                    label: 'OBV',
+                    data: await this.calculate(chartResult),
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    yAxisID: yAxis,
+                    pointRadius: 0,
+                    pointHitRadius: 4,
+                },
+            ],
             options: {
                 scales: {
                     [yAxis]: {
