@@ -49,11 +49,16 @@ export class QuoteSearchComponent implements OnInit, OnDestroy {
     }
 
     private async onSearchValueChange(value: string): Promise<void> {
+        const mappedResults: Map<string, SearchQuoteDto[]> = new Map();
+
+        if (value === '') {
+            this.quotes.next(mappedResults);
+            return;
+        }
+
         const searchResult: SearchQuoteDto[] = await firstValueFrom(
             this.apiService.yahooControllerSearch({ query: value })
         );
-
-        const mappedResults: Map<string, SearchQuoteDto[]> = new Map();
 
         for (const result of searchResult) {
             if (mappedResults.has(result.quoteType)) {

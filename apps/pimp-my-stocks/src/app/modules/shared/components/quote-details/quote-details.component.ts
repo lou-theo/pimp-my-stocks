@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { QuoteSummaryDto } from '@sic/api-interfaces/models';
 import { ApiService } from '@sic/api-interfaces/services';
+import { QuoteType } from '@sic/core/models';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 
 @Component({
@@ -23,6 +24,8 @@ export class QuoteDetailsComponent {
             });
         }
     }
+
+    public QuoteType = QuoteType;
 
     private summary: BehaviorSubject<QuoteSummaryDto | null> =
         new BehaviorSubject<QuoteSummaryDto | null>(null);

@@ -1,0 +1,17 @@
+<h1>
+    {{ summary.summaryProfile?.name }}
+</h1>
+<p>
+    <span class="label">Twitter:</span>&nbsp;
+    <a href="{{ summary.summaryProfile?.twitter }}">{{
+        summary.summaryProfile?.twitter
+    }}</a>
+</p>
+<p>
+    <span class="label">Créée le:</span>
+    {{ summary.summaryProfile?.startDate | date }}
+</p>
+<p>
+    <span class="label">Description:</span>
+    {{ summary.summaryProfile?.description }}
+</p>

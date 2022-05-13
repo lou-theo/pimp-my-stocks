@@ -50,8 +50,7 @@ export class YahooService {
                 (q) => q.isYahooFinance === true
             ) as SearchQuoteResult[];
         } catch (error: any) {
-            this.handleError(query, error);
-            return [];
+            return this.handleError(query, error, []);
         }
     }
 
@@ -67,8 +66,7 @@ export class YahooService {
             result = await yahooFinance.search(query);
             return result.news;
         } catch (error: any) {
-            this.handleError(query, error);
-            return [];
+            return this.handleError(query, error, []);
         }
     }
 
@@ -83,8 +81,11 @@ export class YahooService {
                 'summaryProfile', // Industry, website, description...
                 'quoteType', // Exchange, quote type, symbol...
                 'summaryDetail', // Price, market cap...
-                'topHoldings', // Holdings for funds and ETFs
                 'price', // Market percent change
+                'topHoldings', // Holdings for funds and ETFs
+                'fundOwnership',
+                'fundPerformance',
+                'fundProfile',
             ],
         };
 
@@ -101,8 +102,7 @@ export class YahooService {
                 ]) as PriceDto,
             };
         } catch (error: any) {
-            this.handleError(symbol, error);
-            return {};
+            return this.handleError(symbol, error, {});
         }
     }
 
@@ -128,24 +128,24 @@ export class YahooService {
             result = await yahooFinance._chart(symbol, queryOptions);
             return result;
         } catch (error: any) {
-            this.handleError(symbol, error);
-            return null;
+            return this.handleError(symbol, error, null);
         }
     }
 
-    private handleError(symbol: string, error: any): void {
+    private handleError<T>(symbol: string, error: any, defaultValue: T): T {
         if (
             error instanceof yahooFinance.errors['FailedYahooValidationError']
         ) {
             // Yahoo result was invalid
             console.warn(`Invalid result for "${symbol}": ${error.result}`);
+            return error.result;
         } else {
             console.warn(
                 `Couldn't get "${symbol}": [${error.name}] ${error.message}`
             );
 
             if (error instanceof yahooFinance.errors['HTTPError']) {
-                return;
+                return null;
             }
 
             // Assume this is because of an invalid request

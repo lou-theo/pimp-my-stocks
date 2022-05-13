@@ -27,6 +27,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { IndicatorDialogComponent } from './components/indicator-dialog/indicator-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { QuoteEquityDetailsComponent } from './components/quote-equity-details/quote-equity-details.component';
+import { QuoteCryptocurrencyDetailComponent } from './components/quote-cryptocurrency-detail/quote-cryptocurrency-detail.component';
+import { QuoteEtfDetailsComponent } from './components/quote-etf-details/quote-etf-details.component';
 
 @NgModule({
     declarations: [
@@ -35,6 +38,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
         QuoteDetailsComponent,
         FormulaChartComponent,
         IndicatorDialogComponent,
+        QuoteEquityDetailsComponent,
+        QuoteCryptocurrencyDetailComponent,
+        QuoteEtfDetailsComponent,
     ],
     imports: [
         CommonModule,

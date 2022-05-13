@@ -1,0 +1,13 @@
+<h1>
+    {{ summary.quoteType?.longName ?? summary.quoteType?.shortName }}
+</h1>
+<p>
+    <span class="label">Description:</span>
+    {{ summary.summaryProfile?.longBusinessSummary }}
+</p>
+<p>Type:</p>
+<canvas #typeChart></canvas>
+<p>Secteurs:</p>
+<canvas #sectorChart></canvas>
+<p>Allocation (Top 8 - {{ topHoldingsPercent }} % du total):</p>
+<canvas #holdingsChart></canvas>

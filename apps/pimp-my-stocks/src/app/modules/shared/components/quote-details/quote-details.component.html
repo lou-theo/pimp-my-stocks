@@ -1,26 +1,21 @@
 <mat-card>
-    <ng-container *ngIf="summary$ | async as summary; else noData">
-        <h1>
-            {{ summary.quoteType?.longName ?? summary.quoteType?.shortName }}
-        </h1>
-        <p>
-            <span class="label">Site:</span>&nbsp;
-            <a href="{{ summary.summaryProfile?.website }}">{{
-                summary.summaryProfile?.website
-            }}</a>
-        </p>
-        <p>
-            <span class="label">Industrie:</span>
-            {{ summary.summaryProfile?.industry }}
-        </p>
-        <p>
-            <span class="label">Secteur:</span>
-            {{ summary.summaryProfile?.sector }}
-        </p>
-        <p>
-            <span class="label">Description:</span>
-            {{ summary.summaryProfile?.longBusinessSummary }}
-        </p>
+    <ng-container
+        *ngIf="summary$ | async as summary; else noData"
+        [ngSwitch]="summary.quoteType?.quoteType"
+    >
+        <ng-container *ngSwitchCase="QuoteType.EQUITY">
+            <sic-quote-equity-details
+                [summary]="summary"
+            ></sic-quote-equity-details>
+        </ng-container>
+        <ng-container *ngSwitchCase="QuoteType.CRYPTOCURRENCY">
+            <sic-quote-cryptocurrency-detail
+                [summary]="summary"
+            ></sic-quote-cryptocurrency-detail>
+        </ng-container>
+        <ng-container *ngSwitchCase="QuoteType.ETF">
+            <sic-quote-etf-details [summary]="summary"></sic-quote-etf-details>
+        </ng-container>
     </ng-container>
     <ng-template #noData>
         <p class="no-data">No data.</p>

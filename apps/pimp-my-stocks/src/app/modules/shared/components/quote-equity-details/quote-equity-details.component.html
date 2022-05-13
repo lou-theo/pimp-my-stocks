@@ -1,0 +1,21 @@
+<h1>
+    {{ summary.quoteType?.longName ?? summary.quoteType?.shortName }}
+</h1>
+<p>
+    <span class="label">Site:</span>&nbsp;
+    <a href="{{ summary.summaryProfile?.website }}">{{
+        summary.summaryProfile?.website
+    }}</a>
+</p>
+<p>
+    <span class="label">Industrie:</span>
+    {{ summary.summaryProfile?.industry }}
+</p>
+<p>
+    <span class="label">Secteur:</span>
+    {{ summary.summaryProfile?.sector }}
+</p>
+<p>
+    <span class="label">Description:</span>
+    {{ summary.summaryProfile?.longBusinessSummary }}
+</p>
