@@ -14,6 +14,9 @@ export type IndicatorConfiguration = {
 export abstract class BaseIndicatorConfigurator {
     public abstract getFormGroup(): BaseIndicatorConfigurationFormGroup;
     public abstract resetConfiguration(): void;
+    public abstract updateConfiguration(
+        newConfiguration: IndicatorConfiguration
+    ): void;
 }
 
 export abstract class IndicatorConfigurator<
@@ -37,6 +40,10 @@ export abstract class IndicatorConfigurator<
 
     public resetConfiguration(): void {
         this._configuration = this.getDefaultConfiguration();
+    }
+
+    public updateConfiguration(newConfiguration: TConfiguration): void {
+        this._configuration = newConfiguration;
     }
 
     protected abstract getDefaultConfiguration(): TConfiguration;

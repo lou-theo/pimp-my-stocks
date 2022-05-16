@@ -1,4 +1,4 @@
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import {
     IndicatorConfigurationFormGroup,
     IndicatorConfigurator,
@@ -31,15 +31,31 @@ export class RelativeStrengthIndexIndicatorConfigurator extends IndicatorConfigu
             {
                 lowerLimit: {
                     displayName: 'Limite basse',
-                    formControl: this.fb.control(this.configuration.lowerLimit),
+                    formControl: this.fb.control(
+                        this.configuration.lowerLimit,
+                        [
+                            Validators.required,
+                            Validators.min(0),
+                            Validators.max(100),
+                        ]
+                    ),
                 },
                 upperLimit: {
                     displayName: 'Limite haute',
-                    formControl: this.fb.control(this.configuration.upperLimit),
+                    formControl: this.fb.control(
+                        this.configuration.upperLimit,
+                        [
+                            Validators.required,
+                            Validators.min(0),
+                            Validators.max(100),
+                        ]
+                    ),
                 },
                 length: {
-                    displayName: 'longueur',
-                    formControl: this.fb.control(this.configuration.length),
+                    displayName: 'Longueur',
+                    formControl: this.fb.control(this.configuration.length, [
+                        Validators.required,
+                    ]),
                 },
             }
         );

@@ -17,12 +17,13 @@
                 </mat-selection-list>
             </mat-drawer>
             <mat-drawer-content>
-                <ng-container *ngIf="getSelectedIndicatorForm() !== null">
+                <form
+                    *ngIf="currentForm !== null; else noConfiguration"
+                    fxLayout="column"
+                    fxLayoutGap="10px"
+                >
                     <mat-form-field
-                        *ngFor="
-                            let field of getSelectedIndicatorForm()!.fields
-                                | keyvalue
-                        "
+                        *ngFor="let field of currentForm.fields | keyvalue"
                         appearance="fill"
                     >
                         <mat-label>{{ field.value.displayName }}</mat-label>
@@ -30,8 +31,14 @@
                             matInput
                             [formControl]="field.value.formControl"
                         />
+                        <mat-error *ngIf="field.value.formControl.invalid">
+                            {{ getErrorMessage(field.value.formControl) }}
+                        </mat-error>
                     </mat-form-field>
-                </ng-container>
+                </form>
+                <ng-template #noConfiguration>
+                    <p>Pas de configuration.</p>
+                </ng-template>
             </mat-drawer-content>
         </mat-drawer-container>
     </div>
@@ -41,8 +48,9 @@
             mat-button
             [mat-dialog-close]="getConfigurations()"
             cdkFocusInitial
+            [disabled]="!allFormsValid()"
         >
-            Ok
+            Enregistrer
         </button>
     </div>
 </div>

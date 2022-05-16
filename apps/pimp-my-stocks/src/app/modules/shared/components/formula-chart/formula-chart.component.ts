@@ -177,8 +177,29 @@ export class FormulaChartComponent implements AfterViewInit {
 
         dialogRef
             .afterClosed()
-            .subscribe((result: EditConfigurationResult[]) => {
-                console.log(result);
+            .subscribe((result: EditConfigurationResult[] | undefined) => {
+                if (result === undefined) {
+                    return;
+                }
+
+                for (const configurationResult of result) {
+                    const indicator = this.panel.indicators.find(
+                        (i) => i === configurationResult.indicator
+                    );
+
+                    if (
+                        indicator === undefined ||
+                        indicator.configurator === null
+                    ) {
+                        continue;
+                    }
+
+                    indicator.configurator.updateConfiguration(
+                        configurationResult.configuration
+                    );
+                }
+
+                this.redrawChart();
             });
     }
 }

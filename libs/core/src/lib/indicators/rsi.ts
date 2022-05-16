@@ -10,7 +10,7 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
     }
 
     public get label(): string {
-        return 'RSI (14)';
+        return `RSI (${this.configurator.configuration.length})`;
     }
 
     public configurator: RelativeStrengthIndexIndicatorConfigurator;
@@ -23,7 +23,10 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
     public async calculate(
         chartResult: ChartResultArrayDto
     ): Promise<number[]> {
-        return await ta.rsi(chartResult.quotes.map((quote) => quote.close));
+        return await ta.rsi(
+            chartResult.quotes.map((quote) => quote.close),
+            this.configurator.configuration.length
+        );
     }
 
     public async transform(
@@ -47,7 +50,9 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
                 {
                     type: 'line',
                     label: 'none',
-                    data: result.map((x) => 20),
+                    data: result.map(
+                        (x) => this.configurator.configuration.lowerLimit
+                    ),
                     borderColor: 'grey',
                     borderDash: [5, 15],
                     yAxisID: yAxis,
@@ -57,7 +62,9 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
                 {
                     type: 'line',
                     label: 'none',
-                    data: result.map((x) => 80),
+                    data: result.map(
+                        (x) => this.configurator.configuration.upperLimit
+                    ),
                     borderColor: 'grey',
                     borderDash: [5, 15],
                     yAxisID: yAxis,
