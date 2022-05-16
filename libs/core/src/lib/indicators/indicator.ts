@@ -1,5 +1,6 @@
 import { ChartConfiguration, ChartDataset, ChartTypeRegistry } from 'chart.js';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
+import { BaseIndicatorConfigurator } from './indicator.configuration';
 
 type Configuration = ChartConfiguration<
     keyof ChartTypeRegistry,
@@ -14,10 +15,6 @@ export type IndicatorTransformResult = {
     options: Configuration['options'];
 };
 
-export type IndicatorConfiguration = {
-    [key: string]: unknown;
-};
-
 export abstract class BaseIndicator {
     /**
      * Get the unique identifier for this indicator.
@@ -29,7 +26,7 @@ export abstract class BaseIndicator {
      */
     public abstract get label(): string;
 
-    constructor(protected configuration: IndicatorConfiguration) {}
+    public abstract configurator: BaseIndicatorConfigurator | null;
 
     /**
      * Transform the data to get a result that can be displayed in a chart.
@@ -40,10 +37,12 @@ export abstract class BaseIndicator {
     ): Promise<IndicatorTransformResult>;
 }
 
-export abstract class Indicator<T> extends BaseIndicator {
+export abstract class Indicator<TCalculateResult> extends BaseIndicator {
     /**
      * Calculate the result for this indicator.
      * @param chartResult The source data.
      */
-    public abstract calculate(chartResult: ChartResultArrayDto): Promise<T>;
+    public abstract calculate(
+        chartResult: ChartResultArrayDto
+    ): Promise<TCalculateResult>;
 }

@@ -11,9 +11,7 @@ export class OnBalanceVolumeIndicator extends Indicator<number[]> {
         return 'OBV';
     }
 
-    constructor() {
-        super({});
-    }
+    public configurator = null;
 
     public async calculate(
         chartResult: ChartResultArrayDto

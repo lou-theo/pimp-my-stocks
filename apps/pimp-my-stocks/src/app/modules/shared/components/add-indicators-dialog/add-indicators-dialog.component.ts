@@ -61,7 +61,7 @@ export class AddIndicatorDialogComponent {
             .map((value) =>
                 this.flattenedIndicators
                     .find((i) => i.index === value.index)
-                    ?.factory?.createIndicator()
+                    ?.factory?.createIndicator(this.fb)
             )
             .filter(notUndefined);
     }

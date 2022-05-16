@@ -1,17 +1,8 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import {
-    Indicator,
-    IndicatorConfiguration,
-    IndicatorTransformResult,
-} from './indicator';
+import { Indicator, IndicatorTransformResult } from './indicator';
 import * as ta from 'ta.web';
-import { notNull } from '../utils';
-
-export type SimpleMovingAverageIndicatorConfiguration =
-    IndicatorConfiguration & {
-        sourceIndicator: Indicator<number[]>;
-        length?: number | undefined;
-    };
+import { SimpleMovingAverageIndicatorConfigurator } from './sma.configuration';
+import { FormBuilder } from '@angular/forms';
 
 export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
     public get identifier(): string {
@@ -22,20 +13,23 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
         return 'SMA (14)';
     }
 
-    constructor(
-        protected override configuration: SimpleMovingAverageIndicatorConfiguration
-    ) {
-        super(configuration);
+    public configurator: SimpleMovingAverageIndicatorConfigurator;
+
+    constructor(fb: FormBuilder) {
+        super();
+        this.configurator = new SimpleMovingAverageIndicatorConfigurator(fb);
     }
 
     public async calculate(
         chartResult: ChartResultArrayDto
     ): Promise<(number | null)[]> {
         const sourceData: number[] =
-            await this.configuration.sourceIndicator.calculate(chartResult);
+            await this.configurator.configuration.sourceIndicator.calculate(
+                chartResult
+            );
         const result: (number | null)[] = await ta.sma(
             sourceData,
-            this.configuration.length
+            this.configurator.configuration.length
         );
 
         const missingValues = chartResult.quotes.length - result.length;
@@ -56,7 +50,7 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
                     data: await this.calculate(chartResult),
                     borderColor: 'rgb(255, 99, 132)',
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: `${this.configuration.sourceIndicator}-y-axis`,
+                    yAxisID: `${this.configurator.configuration.sourceIndicator}-y-axis`,
                     pointRadius: 0,
                     pointHitRadius: 4,
                 },

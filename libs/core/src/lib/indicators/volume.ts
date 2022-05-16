@@ -10,9 +10,7 @@ export class VolumeIndicator extends Indicator<number[]> {
         return 'Volume';
     }
 
-    constructor() {
-        super({});
-    }
+    public configurator = null;
 
     public calculate(chartResult: ChartResultArrayDto): Promise<number[]> {
         return Promise.resolve(chartResult.quotes.map((s) => s.volume));

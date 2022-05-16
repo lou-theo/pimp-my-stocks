@@ -1,17 +1,8 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import {
-    Indicator,
-    IndicatorConfiguration,
-    IndicatorTransformResult,
-} from './indicator';
+import { Indicator, IndicatorTransformResult } from './indicator';
 import * as ta from 'ta.web';
-
-export type RelativeStrengthIndexIndicatorConfiguration =
-    IndicatorConfiguration & {
-        lowerLimit: number;
-        upperLimit: number;
-        length?: number | undefined;
-    };
+import { RelativeStrengthIndexIndicatorConfigurator } from './rsi.configuration';
+import { FormBuilder } from '@angular/forms';
 
 export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
     public get identifier(): string {
@@ -22,8 +13,11 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
         return 'RSI (14)';
     }
 
-    constructor() {
-        super({});
+    public configurator: RelativeStrengthIndexIndicatorConfigurator;
+
+    constructor(fb: FormBuilder) {
+        super();
+        this.configurator = new RelativeStrengthIndexIndicatorConfigurator(fb);
     }
 
     public async calculate(

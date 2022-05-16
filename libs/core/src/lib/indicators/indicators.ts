@@ -1,3 +1,4 @@
+import { FormBuilder } from '@angular/forms';
 import { BaseIndicator } from './indicator';
 import { OnBalanceVolumeIndicator } from './obv';
 import { PriceIndicator } from './price';
@@ -12,7 +13,7 @@ export type IndicatorCategory = {
 
 export type IndicatorFactory = {
     displayName: string;
-    createIndicator: () => BaseIndicator;
+    createIndicator: (fb: FormBuilder) => BaseIndicator;
 };
 
 export const INDICATORS: IndicatorCategory[] = [
@@ -44,10 +45,7 @@ export const INDICATORS: IndicatorCategory[] = [
         indicators: [
             {
                 displayName: 'Simple Moving Average (SMA)',
-                createIndicator: () =>
-                    new SimpleMovingAverageIndicator({
-                        sourceIndicator: new PriceIndicator(),
-                    }),
+                createIndicator: (fb) => new SimpleMovingAverageIndicator(fb),
             },
         ],
     },
@@ -60,7 +58,7 @@ export const INDICATORS: IndicatorCategory[] = [
             },
             {
                 displayName: 'Relative Strength Index (RSI)',
-                createIndicator: () => new RelativeStrengthIndexIndicator(),
+                createIndicator: (fb) => new RelativeStrengthIndexIndicator(fb),
             },
         ],
     },

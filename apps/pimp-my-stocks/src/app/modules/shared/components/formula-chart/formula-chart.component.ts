@@ -21,6 +21,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
 import { ChartPanel } from '@sic/core/models';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
+import {
+    EditConfigurationResult,
+    EditIndicatorsDialogComponent,
+} from '../edit-indicators-dialog/edit-indicators-dialog.component';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -161,6 +165,20 @@ export class FormulaChartComponent implements AfterViewInit {
                     (i) => !result.includes(i)
                 );
                 this.redrawChart();
+            });
+    }
+
+    openEditDialog(): void {
+        const dialogRef = this.dialog.open(EditIndicatorsDialogComponent, {
+            width: '80%',
+            height: '80%',
+            data: this.panel.indicators,
+        });
+
+        dialogRef
+            .afterClosed()
+            .subscribe((result: EditConfigurationResult[]) => {
+                console.log(result);
             });
     }
 }

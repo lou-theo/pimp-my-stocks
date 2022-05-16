@@ -10,9 +10,7 @@ export class PriceIndicator extends Indicator<number[]> {
         return 'Price';
     }
 
-    constructor() {
-        super({});
-    }
+    public configurator = null;
 
     public calculate(chartResult: ChartResultArrayDto): Promise<number[]> {
         return Promise.resolve(chartResult.quotes.map((s) => s.close));
