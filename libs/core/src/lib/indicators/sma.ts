@@ -3,6 +3,7 @@ import { Indicator, IndicatorTransformResult } from './indicator';
 import * as ta from 'ta.web';
 import { SimpleMovingAverageIndicatorConfigurator } from './sma.configuration';
 import { FormBuilder } from '@angular/forms';
+import { unshiftWithNull } from '../utils';
 
 export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
     public get identifier(): string {
@@ -32,10 +33,7 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
             this.configurator.configuration.length
         );
 
-        const missingValues = chartResult.quotes.length - result.length;
-        const nulls: null[] = new Array(missingValues).fill(null);
-        result.unshift(...nulls);
-
+        unshiftWithNull(result, chartResult.quotes.length);
         return result;
     }
 

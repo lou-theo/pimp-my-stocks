@@ -3,6 +3,7 @@ import { Indicator, IndicatorTransformResult } from './indicator';
 import * as ta from 'ta.web';
 import { RelativeStrengthIndexIndicatorConfigurator } from './rsi.configuration';
 import { FormBuilder } from '@angular/forms';
+import { unshiftWithNull } from '../utils';
 
 export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
     public get identifier(): string {
@@ -23,10 +24,13 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
     public async calculate(
         chartResult: ChartResultArrayDto
     ): Promise<number[]> {
-        return await ta.rsi(
+        const result = await ta.rsi(
             chartResult.quotes.map((quote) => quote.close),
             this.configurator.configuration.length
         );
+
+        unshiftWithNull(result, chartResult.quotes.length);
+        return result;
     }
 
     public async transform(
