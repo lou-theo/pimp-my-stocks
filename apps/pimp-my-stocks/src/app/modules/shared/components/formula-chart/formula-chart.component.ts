@@ -9,7 +9,11 @@ import {
     EventEmitter,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import { BaseIndicator, IndicatorTransformResult } from '@sic/core/indicators';
+import {
+    BaseIndicator,
+    Dataset,
+    IndicatorTransformResult,
+} from '@sic/core/indicators';
 import Chart, {
     ChartConfiguration,
     ChartData,
@@ -25,6 +29,9 @@ import {
     EditConfigurationResult,
     EditIndicatorsDialogComponent,
 } from '../edit-indicators-dialog/edit-indicators-dialog.component';
+import { Condition, EqualityType } from '@sic/core/conditions';
+import { RelativeStrengthIndexIndicator } from '@sic/core/indicators/rsi';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -61,7 +68,7 @@ export class FormulaChartComponent implements AfterViewInit {
 
     private chart: Chart | null = null;
 
-    constructor(public dialog: MatDialog) {}
+    constructor(public dialog: MatDialog, public readonly fb: FormBuilder) {}
 
     ngAfterViewInit(): void {
         this.redrawChart();
@@ -89,6 +96,7 @@ export class FormulaChartComponent implements AfterViewInit {
             return;
         }
 
+        // Get indicators datasets
         const promises: Promise<IndicatorTransformResult>[] = [];
 
         for (const indicator of this.panel.indicators) {
@@ -96,7 +104,48 @@ export class FormulaChartComponent implements AfterViewInit {
         }
 
         const results: IndicatorTransformResult[] = await Promise.all(promises);
-        const datasets = [];
+
+        // TODO: Remove condition placeholder data & calculations
+
+        // Get conditions datasets
+        const condition = new Condition(
+            new RelativeStrengthIndexIndicator(this.fb),
+            80,
+            EqualityType.SUPERIOR
+        );
+
+        const conditionResult: (number | null)[] = await Promise.all(
+            this.chartResult.quotes.map(async (q) => {
+                if (this.chartResult !== null) {
+                    return (await condition.evaluate(this.chartResult, q.date))
+                        ? q.close
+                        : null;
+                }
+
+                return null;
+            })
+        );
+
+        results.push({
+            datasets: [
+                {
+                    type: 'line',
+                    label: 'Buy',
+                    data: conditionResult,
+                    borderColor: 'green',
+                    yAxisID: 'price-y-axis',
+                    showLine: false,
+                    fill: false,
+                    pointStyle: 'rectRot',
+                    pointRadius: 4,
+                    pointHoverRadius: 4,
+                    order: 1,
+                },
+            ],
+            options: {},
+        });
+
+        const datasets: Dataset[] = [];
 
         for (const result of results) {
             for (const dataset of result.datasets) {

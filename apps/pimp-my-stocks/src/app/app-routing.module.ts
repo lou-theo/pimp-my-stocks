@@ -5,14 +5,9 @@ import { MainComponent } from './modules/layout/components/main/main.component';
 const routes: Routes = [
     {
         path: '',
-        pathMatch: 'full',
-        redirectTo: 'home',
-    },
-    {
-        path: 'home',
         component: MainComponent,
         loadChildren: () =>
-            import('./modules/home/home.module').then((m) => m.HomeModule),
+            import('./modules/pages/pages.module').then((m) => m.PagesModule),
     },
 ];
 

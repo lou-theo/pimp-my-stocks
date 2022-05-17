@@ -1,11 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import {
-    BaseIndicator,
-    IndicatorFactory,
-    INDICATORS,
-} from '@sic/core/indicators';
+import { BaseIndicator } from '@sic/core/indicators';
+import { IndicatorService } from '@sic/core/services';
 import { notUndefined } from '@sic/core/utils';
 
 @Component({
@@ -16,36 +13,19 @@ import { notUndefined } from '@sic/core/utils';
 export class AddIndicatorDialogComponent {
     public selectedIndicatorsControl: FormArray;
 
-    public INDICATORS = INDICATORS;
-    private flattenedIndicators: {
-        index: number;
-        factory: IndicatorFactory;
-    }[] = [];
-
     constructor(
         private readonly fb: FormBuilder,
+        public readonly indicatorService: IndicatorService,
         public dialogRef: MatDialogRef<AddIndicatorDialogComponent>
     ) {
-        let i = 0;
-        for (const category of INDICATORS) {
-            for (const indicator of category.indicators) {
-                this.flattenedIndicators.push({
-                    index: i,
-                    factory: indicator,
-                });
-                i++;
-            }
-        }
-
         this.selectedIndicatorsControl = this.fb.array(
-            this.flattenedIndicators.map(() => new FormControl())
+            this.indicatorService.flattenedIndicators.map(
+                () => new FormControl()
+            )
         );
     }
 
-    public getControlFor(name: string): FormControl {
-        const index =
-            this.flattenedIndicators.find((i) => i.factory.displayName === name)
-                ?.index ?? -1;
+    public getControlAt(index: number): FormControl {
         return this.selectedIndicatorsControl.at(index) as FormControl;
     }
 
@@ -59,7 +39,7 @@ export class AddIndicatorDialogComponent {
         return selectedIndices
             .filter((value) => value.selected)
             .map((value) =>
-                this.flattenedIndicators
+                this.indicatorService.flattenedIndicators
                     .find((i) => i.index === value.index)
                     ?.factory?.createIndicator(this.fb)
             )

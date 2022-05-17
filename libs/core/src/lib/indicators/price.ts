@@ -32,6 +32,7 @@ export class PriceIndicator extends Indicator<number[]> {
                     yAxisID: yAxis,
                     pointRadius: 0,
                     pointHitRadius: 4,
+                    order: 10,
                 },
             ],
             options: {

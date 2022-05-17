@@ -1,13 +1,12 @@
 <h1 mat-dialog-title>Ajouter des indicateurs</h1>
 <mat-divider></mat-divider>
 <div mat-dialog-content class="mat-typography">
-    <section *ngFor="let indicatorCategory of INDICATORS">
+    <section *ngFor="let indicatorCategory of indicatorService.indicators">
         <h2>{{ indicatorCategory.displayName }}</h2>
         <p *ngFor="let indicator of indicatorCategory.indicators">
-            <mat-checkbox
-                [formControl]="getControlFor(indicator.displayName)"
-                >{{ indicator.displayName }}</mat-checkbox
-            >
+            <mat-checkbox [formControl]="getControlAt(indicator.index)">{{
+                indicator.displayName
+            }}</mat-checkbox>
         </p>
     </section>
 </div>

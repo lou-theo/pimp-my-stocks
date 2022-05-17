@@ -13,6 +13,7 @@ import { QuoteEtfDetailsComponent } from './components/quote-etf-details/quote-e
 import { RemoveIndicatorsDialogComponent } from './components/remove-indicators-dialog/remove-indicators-dialog.component';
 import { EditIndicatorsDialogComponent } from './components/edit-indicators-dialog/edit-indicators-dialog.component';
 import { MaterialModule } from '../material/material.module';
+import { EditConditionComponent } from './components/edit-condition/edit-condition.component';
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { MaterialModule } from '../material/material.module';
         QuoteEtfDetailsComponent,
         RemoveIndicatorsDialogComponent,
         EditIndicatorsDialogComponent,
+        EditConditionComponent,
     ],
     imports: [
         CommonModule,
@@ -45,6 +47,7 @@ import { MaterialModule } from '../material/material.module';
         FormulaChartComponent,
         AddIndicatorDialogComponent,
         MaterialModule,
+        EditConditionComponent,
     ],
 })
 export class SharedModule {}

@@ -1,0 +1,31 @@
+<div fxLayout="row" fxLayoutAlign="start center">
+    <span>Le / La</span>
+    <mat-form-field appearance="fill">
+        <mat-label>Aggrégation</mat-label>
+        <mat-select>
+            <mat-option
+                *ngFor="let type of AggregationTypeLabelMapping | keyvalue"
+                [value]="type.key"
+            >
+                {{ type.value }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <span>du</span>
+    <mat-form-field appearance="fill">
+        <mat-label>Indicateur</mat-label>
+        <mat-select>
+            <mat-optgroup
+                *ngFor="let category of indicatorService.indicators"
+                [label]="category.displayName"
+            >
+                <mat-option
+                    *ngFor="let indicator of category.indicators"
+                    [value]="indicator.index"
+                >
+                    {{ indicator.displayName }}
+                </mat-option>
+            </mat-optgroup>
+        </mat-select>
+    </mat-form-field>
+</div>

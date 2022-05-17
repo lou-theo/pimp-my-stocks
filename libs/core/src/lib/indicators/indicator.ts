@@ -2,13 +2,13 @@ import { ChartConfiguration, ChartDataset, ChartTypeRegistry } from 'chart.js';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import { BaseIndicatorConfigurator } from './indicator.configuration';
 
-type Configuration = ChartConfiguration<
+export type Configuration = ChartConfiguration<
     keyof ChartTypeRegistry,
     number[],
     string
 >;
 
-type Dataset = ChartDataset<keyof ChartTypeRegistry, (number | null)[]>;
+export type Dataset = ChartDataset<keyof ChartTypeRegistry, (number | null)[]>;
 
 export type IndicatorTransformResult = {
     datasets: Dataset[];
