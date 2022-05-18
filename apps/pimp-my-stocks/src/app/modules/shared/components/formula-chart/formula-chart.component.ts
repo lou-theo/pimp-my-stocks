@@ -11,6 +11,7 @@ import {
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import {
     BaseIndicator,
+    Configuration,
     Dataset,
     IndicatorTransformResult,
 } from '@sic/core/indicators';
@@ -18,6 +19,7 @@ import Chart, {
     ChartConfiguration,
     ChartData,
     ChartTypeRegistry,
+    InteractionModeMap,
 } from 'chart.js/auto';
 import { DateTime } from 'luxon';
 import * as merge from 'deepmerge';
@@ -32,6 +34,7 @@ import {
 import { Condition, EqualityType } from '@sic/core/conditions';
 import { RelativeStrengthIndexIndicator } from '@sic/core/indicators/rsi';
 import { FormBuilder } from '@angular/forms';
+import { CrosshairOptions, CrosshairPlugin } from 'chartjs-plugin-crosshair';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -138,7 +141,7 @@ export class FormulaChartComponent implements AfterViewInit {
                     fill: false,
                     pointStyle: 'rectRot',
                     pointRadius: 4,
-                    pointHoverRadius: 4,
+                    pointHoverRadius: 1,
                     order: 1,
                 },
             ],
@@ -165,7 +168,40 @@ export class FormulaChartComponent implements AfterViewInit {
             datasets: datasets,
         };
 
-        const mergedOption = merge.all(results.map((i) => i.options as object));
+        const mergedOption =
+            (merge.all(
+                results.map((i) => i.options as object)
+            ) as Configuration['options']) ?? {};
+
+        const crossHairOptions: CrosshairOptions = {
+            line: {
+                color: '#F66',
+                width: 1,
+            },
+            sync: {
+                enabled: true,
+                group: 1,
+                suppressTooltips: false,
+            },
+            zoom: {
+                enabled: true,
+                zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',
+                zoomboxBorderColor: '#48F',
+                zoomButtonText: 'Reset Zoom',
+                zoomButtonClass: 'reset-zoom',
+            },
+            snap: {
+                enabled: true,
+            },
+        };
+
+        mergedOption.plugins = {
+            tooltip: {
+                mode: 'nearest',
+                intersect: false,
+            },
+            crosshair: crossHairOptions,
+        };
 
         const config: ChartConfiguration<
             keyof ChartTypeRegistry,

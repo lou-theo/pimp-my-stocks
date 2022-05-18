@@ -31,6 +31,7 @@
         "@nestjs/swagger": "^5.2.1",
         "@nrwl/angular": "13.10.3",
         "chart.js": "^3.7.1",
+        "chartjs-plugin-crosshair": "^1.2.0",
         "deepmerge": "^4.2.2",
         "fastify-swagger": "^5.2.0",
         "luxon": "^2.3.2",

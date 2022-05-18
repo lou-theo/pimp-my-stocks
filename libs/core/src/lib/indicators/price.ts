@@ -31,7 +31,7 @@ export class PriceIndicator extends Indicator<number[]> {
                     borderColor: 'rgb(54, 162, 235)',
                     yAxisID: yAxis,
                     pointRadius: 0,
-                    pointHitRadius: 4,
+                    pointHitRadius: 1,
                     order: 10,
                 },
             ],

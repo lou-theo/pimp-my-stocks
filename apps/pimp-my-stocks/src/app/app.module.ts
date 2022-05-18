@@ -7,6 +7,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from './modules/layout/layout.module';
 import { PagesModule } from './modules/pages/pages.module';
+import { Chart, Interaction } from 'chart.js';
+import { CrosshairPlugin, Interpolate } from 'chartjs-plugin-crosshair';
 
 @NgModule({
     declarations: [AppComponent],
@@ -21,4 +23,9 @@ import { PagesModule } from './modules/pages/pages.module';
     providers: [],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+    constructor() {
+        Chart.register(CrosshairPlugin);
+        Interaction.modes.interpolate = Interpolate;
+    }
+}
