@@ -1,8 +1,13 @@
-<div fxLayout="row" fxLayoutAlign="start center">
+<form
+    fxLayout="row wrap"
+    fxLayoutAlign="start center"
+    class="condition-container"
+    [formGroup]="conditionFormGroup"
+>
     <span>Le / La</span>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
         <mat-label>Aggrégation</mat-label>
-        <mat-select>
+        <mat-select [formControl]="getControlFor('aggregationType')">
             <mat-option
                 *ngFor="let type of AggregationTypeLabelMapping | keyvalue"
                 [value]="type.key"
@@ -12,9 +17,9 @@
         </mat-select>
     </mat-form-field>
     <span>du</span>
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
         <mat-label>Indicateur</mat-label>
-        <mat-select>
+        <mat-select [formControl]="getControlFor('indicatorIndex')">
             <mat-optgroup
                 *ngFor="let category of indicatorService.indicators"
                 [label]="category.displayName"
@@ -28,4 +33,32 @@
             </mat-optgroup>
         </mat-select>
     </mat-form-field>
-</div>
+    <button mat-icon-button>
+        <mat-icon>settings</mat-icon>
+    </button>
+    <span>sur les</span>
+    <mat-form-field appearance="outline">
+        <mat-label>Nombre de jour</mat-label>
+        <input type="number" matInput [formControl]="getControlFor('range')" />
+    </mat-form-field>
+    <span>derniers jours doit être</span>
+    <mat-form-field appearance="outline">
+        <mat-label>Comparaison</mat-label>
+        <mat-select [formControl]="getControlFor('equalityType')">
+            <mat-option
+                *ngFor="let type of EqualityTypeLabelMapping | keyvalue"
+                [value]="type.key"
+            >
+                {{ type.value }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <span>à</span>
+    <mat-form-field
+        appearance="outline"
+        [formControl]="getControlFor('comparedValue')"
+    >
+        <mat-label>Valeur</mat-label>
+        <input type="number" matInput />
+    </mat-form-field>
+</form>
