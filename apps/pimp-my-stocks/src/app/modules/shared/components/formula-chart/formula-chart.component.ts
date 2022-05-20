@@ -11,30 +11,28 @@ import {
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
 import {
     BaseIndicator,
-    Configuration,
-    Dataset,
     IndicatorTransformResult,
-} from '@sic/core/indicators';
+    RelativeStrengthIndexIndicator,
+} from '@sic/indicator';
 import Chart, {
     ChartConfiguration,
     ChartData,
+    ChartDataset,
     ChartTypeRegistry,
-    InteractionModeMap,
 } from 'chart.js/auto';
 import { DateTime } from 'luxon';
 import * as merge from 'deepmerge';
 import { MatDialog } from '@angular/material/dialog';
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
-import { ChartPanel } from '@sic/core/models';
+import { ChartPanel } from '@sic/chart';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 import {
     EditConfigurationResult,
     EditIndicatorsDialogComponent,
 } from '../edit-indicators-dialog/edit-indicators-dialog.component';
-import { Condition, EqualityType } from '@sic/core/conditions';
-import { RelativeStrengthIndexIndicator } from '@sic/core/indicators/rsi';
+import { Condition, EqualityType } from '@sic/condition';
 import { FormBuilder } from '@angular/forms';
-import { CrosshairOptions, CrosshairPlugin } from 'chartjs-plugin-crosshair';
+import { CrosshairOptions } from 'chartjs-plugin-crosshair';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -148,7 +146,7 @@ export class FormulaChartComponent implements AfterViewInit {
             options: {},
         });
 
-        const datasets: Dataset[] = [];
+        const datasets: ChartDataset[] = [];
 
         for (const result of results) {
             for (const dataset of result.datasets) {
@@ -157,11 +155,7 @@ export class FormulaChartComponent implements AfterViewInit {
         }
 
         // Draw chart on the canvas
-        const data: ChartData<
-            keyof ChartTypeRegistry,
-            (number | null)[],
-            string
-        > = {
+        const data: ChartData = {
             labels: this.chartResult.quotes.map((s) =>
                 DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
             ),
@@ -171,7 +165,7 @@ export class FormulaChartComponent implements AfterViewInit {
         const mergedOption =
             (merge.all(
                 results.map((i) => i.options as object)
-            ) as Configuration['options']) ?? {};
+            ) as ChartConfiguration['options']) ?? {};
 
         const crossHairOptions: CrosshairOptions = {
             line: {
@@ -203,11 +197,7 @@ export class FormulaChartComponent implements AfterViewInit {
             crosshair: crossHairOptions,
         };
 
-        const config: ChartConfiguration<
-            keyof ChartTypeRegistry,
-            (number | null)[],
-            string
-        > = {
+        const config: ChartConfiguration = {
             type: 'line',
             data: data,
             options: mergedOption,

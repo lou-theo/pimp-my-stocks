@@ -11,8 +11,8 @@ import {
     AggregationTypeLabelMapping,
     EqualityType,
     EqualityTypeLabelMapping,
-} from '@sic/core/conditions';
-import { IndicatorService } from '@sic/core/services';
+} from '@sic/condition';
+import { IndicatorService } from '@sic/indicator';
 
 type ConditionForm = {
     aggregationType: AggregationType;

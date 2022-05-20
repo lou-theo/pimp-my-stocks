@@ -7,11 +7,12 @@ import {
     AfterViewInit,
 } from '@angular/core';
 import { QuoteSummaryDto } from '@sic/api-interfaces/models';
-import Chart, {
+import {
+    Chart,
     ChartConfiguration,
     ChartData,
     ChartTypeRegistry,
-} from 'chart.js/auto';
+} from 'chart.js';
 
 type ChartAndCanvas = {
     label: string;

@@ -20,7 +20,7 @@ import {
 } from 'yahoo-finance2/dist/esm/src/modules/search';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ChartInterval } from '@sic/core/models/chart-interval';
+import { ChartInterval } from '@sic/chart';
 import { PriceDto, QuoteSummaryDto } from '../models/yahoo.quote.dto';
 import * as merge from 'deepmerge';
 

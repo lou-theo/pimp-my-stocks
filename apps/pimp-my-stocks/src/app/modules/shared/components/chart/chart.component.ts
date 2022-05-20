@@ -15,16 +15,17 @@ import {
     ReplaySubject,
     Subscription,
 } from 'rxjs';
-import { FormControl } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models/chart-result-array-dto';
-import { ChartInterval, CHART_INTERVALS, ChartPanel } from '@sic/core/models';
-import { isBeforeDateValidator } from '@sic/core/validators';
+import { ChartInterval, CHART_INTERVALS, ChartPanel } from '@sic/chart';
+import { isBeforeDateValidator } from '@sic/core';
 import {
     PriceIndicator,
     VolumeIndicator,
     OnBalanceVolumeIndicator,
-} from '@sic/core/indicators';
+    SimpleMovingAverageIndicator,
+} from '@sic/indicator';
 
 @Component({
     selector: 'sic-chart',
@@ -67,12 +68,18 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private subscriptions: Subscription = new Subscription();
 
-    public panels: ChartPanel[] = [
-        new ChartPanel(1, [new PriceIndicator(), new VolumeIndicator()]),
-        new ChartPanel(2, [new OnBalanceVolumeIndicator()]),
-    ];
+    public panels: ChartPanel[];
 
-    constructor(private readonly apiService: ApiService) {}
+    constructor(private readonly apiService: ApiService, fb: FormBuilder) {
+        this.panels = [
+            new ChartPanel(1, [
+                new PriceIndicator(fb),
+                new VolumeIndicator(),
+                new SimpleMovingAverageIndicator(fb),
+            ]),
+            new ChartPanel(2, [new OnBalanceVolumeIndicator()]),
+        ];
+    }
 
     ngOnInit(): void {
         this.subscriptions.add(

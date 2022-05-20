@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { QuoteSummaryDto } from '@sic/api-interfaces/models';
 import { ApiService } from '@sic/api-interfaces/services';
-import { QuoteType } from '@sic/core/models';
+import { QuoteType } from '@sic/chart';
 import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 
 @Component({

@@ -1,9 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiQuery } from '@nestjs/swagger';
-import {
-    ChartInterval,
-    isChartInterval,
-} from '@sic/core/models/chart-interval';
+import { ChartInterval, isChartInterval } from '@sic/chart';
 import { DateTime } from 'luxon';
 import { ChartResultArrayDto } from '../models/yahoo.chart.dto';
 import { QuoteSummaryDto } from '../models/yahoo.quote.dto';

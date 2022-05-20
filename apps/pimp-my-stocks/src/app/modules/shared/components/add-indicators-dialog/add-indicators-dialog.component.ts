@@ -1,9 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BaseIndicator } from '@sic/core/indicators';
-import { IndicatorService } from '@sic/core/services';
-import { notUndefined } from '@sic/core/utils';
+import { BaseIndicator, IndicatorService } from '@sic/indicator';
+import { notUndefined } from '@sic/core';
 
 @Component({
     templateUrl: './add-indicators-dialog.component.html',
@@ -41,7 +40,7 @@ export class AddIndicatorDialogComponent {
             .map((value) =>
                 this.indicatorService.flattenedIndicators
                     .find((i) => i.index === value.index)
-                    ?.factory?.createIndicator(this.fb)
+                    ?.factory?.createIndicator()
             )
             .filter(notUndefined);
     }

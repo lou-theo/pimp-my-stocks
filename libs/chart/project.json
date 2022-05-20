@@ -1,0 +1,26 @@
+{
+    "projectType": "library",
+    "root": "libs/chart",
+    "sourceRoot": "libs/chart/src",
+    "prefix": "sic",
+    "targets": {
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/libs/chart"],
+            "options": {
+                "jestConfig": "libs/chart/jest.config.js",
+                "passWithNoTests": true
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": [
+                    "libs/chart/src/**/*.ts",
+                    "libs/chart/src/**/*.html"
+                ]
+            }
+        }
+    },
+    "tags": []
+}

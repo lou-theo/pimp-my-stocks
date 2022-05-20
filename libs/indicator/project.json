@@ -1,0 +1,26 @@
+{
+    "projectType": "library",
+    "root": "libs/indicator",
+    "sourceRoot": "libs/indicator/src",
+    "prefix": "sic",
+    "targets": {
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/libs/indicator"],
+            "options": {
+                "jestConfig": "libs/indicator/jest.config.js",
+                "passWithNoTests": true
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": [
+                    "libs/indicator/src/**/*.ts",
+                    "libs/indicator/src/**/*.html"
+                ]
+            }
+        }
+    },
+    "tags": []
+}

@@ -1,0 +1,26 @@
+{
+    "projectType": "library",
+    "root": "libs/condition",
+    "sourceRoot": "libs/condition/src",
+    "prefix": "sic",
+    "targets": {
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/libs/condition"],
+            "options": {
+                "jestConfig": "libs/condition/jest.config.js",
+                "passWithNoTests": true
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": [
+                    "libs/condition/src/**/*.ts",
+                    "libs/condition/src/**/*.html"
+                ]
+            }
+        }
+    },
+    "tags": []
+}

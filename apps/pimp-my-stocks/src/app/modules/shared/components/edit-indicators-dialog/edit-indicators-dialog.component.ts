@@ -4,18 +4,13 @@ import {
     Inject,
     OnDestroy,
 } from '@angular/core';
-import {
-    AbstractControl,
-    FormBuilder,
-    FormControl,
-    ValidationErrors,
-} from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BaseIndicator } from '@sic/core/indicators';
 import {
+    BaseIndicator,
     BaseIndicatorConfigurationFormGroup,
     IndicatorConfiguration,
-} from '@sic/core/indicators/indicator.configuration';
+} from '@sic/indicator';
 import { startWith, Subscription } from 'rxjs';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 
