@@ -18,7 +18,7 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models/chart-result-array-dto';
-import { ChartInterval, CHART_INTERVALS, ChartPanel } from '@sic/chart';
+import { ChartInterval, CHART_INTERVALS } from '@sic/chart';
 import { isBeforeDateValidator } from '@sic/core';
 import {
     PriceIndicator,
@@ -26,6 +26,7 @@ import {
     OnBalanceVolumeIndicator,
     SimpleMovingAverageIndicator,
 } from '@sic/indicator';
+import { ChartPanel } from '../../models/chart-panel';
 
 @Component({
     selector: 'sic-chart',

@@ -16,6 +16,10 @@ export class PriceIndicator extends Indicator<number[]> {
         return 'Price';
     }
 
+    public get yAxisId(): string {
+        return `${this.identifier}-y-axis`;
+    }
+
     public configurator: PriceIndicatorConfigurator;
 
     constructor(fb: FormBuilder) {
@@ -41,31 +45,20 @@ export class PriceIndicator extends Indicator<number[]> {
     public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
-        const yAxis = `${this.identifier}-y-axis`;
-
         return {
-            datasets: [
-                {
-                    type: 'line',
-                    label: `${this.label} (${chartResult.meta.currency})`,
-                    data: await this.calculate(chartResult),
-                    fill: false,
-                    borderColor: 'rgb(54, 162, 235)',
-                    yAxisID: yAxis,
-                    pointRadius: 0,
-                    pointHitRadius: 1,
-                    order: 10,
-                },
-            ],
-            options: {
-                scales: {
-                    [yAxis]: {
-                        type: 'linear',
-                        axis: 'y',
-                        position: 'right',
-                    },
+            label: `${this.label} (${chartResult.meta.currency})`,
+            dataset: await this.calculate(chartResult),
+            yAxisId: this.yAxisId,
+            yAxis: {
+                id: this.yAxisId,
+                type: 'value',
+                name: 'Price',
+                position: 'right',
+                axisLabel: {
+                    formatter: `{value} ${chartResult.meta.currency}`,
                 },
             },
+            series: { type: 'line', seriesLayoutBy: 'row' },
         };
     }
 }

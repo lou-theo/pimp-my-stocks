@@ -1,9 +1,5 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import {
-    BaseIndicatorConfigurator,
-    IndicatorTransformResult,
-} from '@sic/indicator';
-import { ChartTypeRegistry } from 'chart.js';
+import { BaseIndicatorConfigurator, IndicatorTransformResult } from '../..';
 
 export abstract class BaseIndicator {
     /**
@@ -15,6 +11,11 @@ export abstract class BaseIndicator {
      * Get the label shown in the chart.
      */
     public abstract get label(): string;
+
+    /**
+     * Get the id of the y axis used by this indicator.
+     */
+    public abstract get yAxisId(): string;
 
     public abstract configurator: BaseIndicatorConfigurator | null;
 

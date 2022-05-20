@@ -11,6 +11,10 @@ export class OnBalanceVolumeIndicator extends Indicator<number[]> {
         return 'OBV';
     }
 
+    public get yAxisId(): string {
+        return `${this.identifier}-y-axis`;
+    }
+
     public configurator = null;
 
     public async calculate(
@@ -24,30 +28,17 @@ export class OnBalanceVolumeIndicator extends Indicator<number[]> {
     public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
-        const yAxis = `${this.identifier}-y-axis`;
-
         return {
-            datasets: [
-                {
-                    type: 'line',
-                    label: this.label,
-                    data: await this.calculate(chartResult),
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: yAxis,
-                    pointRadius: 0,
-                    pointHitRadius: 4,
-                },
-            ],
-            options: {
-                scales: {
-                    [yAxis]: {
-                        type: 'linear',
-                        axis: 'y',
-                        display: false,
-                    },
-                },
+            label: this.label,
+            dataset: await this.calculate(chartResult),
+            yAxisId: this.yAxisId,
+            yAxis: {
+                id: this.yAxisId,
+                type: 'value',
+                name: this.label,
+                position: 'right',
             },
+            series: { type: 'line', seriesLayoutBy: 'row' },
         };
     }
 }

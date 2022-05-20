@@ -7,18 +7,12 @@ import {
     AfterViewInit,
 } from '@angular/core';
 import { QuoteSummaryDto } from '@sic/api-interfaces/models';
-import {
-    Chart,
-    ChartConfiguration,
-    ChartData,
-    ChartTypeRegistry,
-} from 'chart.js';
 
 type ChartAndCanvas = {
     label: string;
     getLabels: (summary: QuoteSummaryDto) => string[];
     getValues: (summary: QuoteSummaryDto) => number[];
-    chart: Chart | null;
+    chart: echarts.ECharts | null;
     canvas: ElementRef<HTMLCanvasElement> | undefined;
 };
 
@@ -123,6 +117,8 @@ export class QuoteEtfDetailsComponent implements AfterViewInit {
             return;
         }
 
+        // TODO: update this to use echarts
+        /*
         // Reset the chart
         if (chart.chart != null) {
             chart.chart.destroy();
@@ -166,6 +162,6 @@ export class QuoteEtfDetailsComponent implements AfterViewInit {
             },
         };
 
-        chart.chart = new Chart(ctx, config);
+        chart.chart = new Chart(ctx, config);*/
     }
 }

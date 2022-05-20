@@ -15,6 +15,10 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
         return 'SMA (14)';
     }
 
+    public get yAxisId(): string {
+        return `${this.configurator.configuration.sourceIndicator.identifier}-y-axis`;
+    }
+
     public configurator: SimpleMovingAverageIndicatorConfigurator;
 
     constructor(fb: FormBuilder) {
@@ -43,19 +47,10 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
         return {
-            datasets: [
-                {
-                    type: 'line',
-                    label: this.label,
-                    data: await this.calculate(chartResult),
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: `${this.configurator.configuration.sourceIndicator}-y-axis`,
-                    pointRadius: 0,
-                    pointHitRadius: 4,
-                },
-            ],
-            options: {},
+            label: this.label,
+            dataset: await this.calculate(chartResult),
+            yAxisId: this.yAxisId,
+            series: { type: 'line', seriesLayoutBy: 'row' },
         };
     }
 }

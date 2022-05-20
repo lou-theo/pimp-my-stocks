@@ -15,6 +15,10 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
         return `RSI (${this.configurator.configuration.length})`;
     }
 
+    public get yAxisId(): string {
+        return `${this.identifier}-y-axis`;
+    }
+
     public configurator: RelativeStrengthIndexIndicatorConfigurator;
 
     constructor(fb: FormBuilder) {
@@ -37,63 +41,29 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
     public async transform(
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
-        const yAxis = `${this.identifier}-y-axis`;
-        const result = await this.calculate(chartResult);
-
         return {
-            datasets: [
-                {
-                    type: 'line',
-                    label: this.label,
-                    data: result,
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    yAxisID: yAxis,
-                    pointRadius: 0,
-                    pointHitRadius: 4,
-                },
-                {
-                    type: 'line',
-                    label: 'none',
-                    data: result.map(
-                        (x) => this.configurator.configuration.lowerLimit
-                    ),
-                    borderColor: 'grey',
-                    borderDash: [5, 15],
-                    yAxisID: yAxis,
-                    pointRadius: 0,
-                    pointHitRadius: 0,
-                },
-                {
-                    type: 'line',
-                    label: 'none',
-                    data: result.map(
-                        (x) => this.configurator.configuration.upperLimit
-                    ),
-                    borderColor: 'grey',
-                    borderDash: [5, 15],
-                    yAxisID: yAxis,
-                    pointRadius: 0,
-                    pointHitRadius: 0,
-                },
-            ],
-            options: {
-                scales: {
-                    [yAxis]: {
-                        type: 'linear',
-                        axis: 'y',
-                        display: true,
-                    },
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            filter: (item) => {
-                                return item.text != 'none';
-                            },
+            label: this.label,
+            dataset: await this.calculate(chartResult),
+            series: {
+                type: 'line',
+                seriesLayoutBy: 'row',
+                markLine: {
+                    data: [
+                        {
+                            yAxis: this.configurator.configuration.lowerLimit,
                         },
-                    },
+                        {
+                            yAxis: this.configurator.configuration.upperLimit,
+                        },
+                    ],
                 },
+            },
+            yAxisId: this.yAxisId,
+            yAxis: {
+                id: this.yAxisId,
+                type: 'value',
+                name: this.label,
+                position: 'right',
             },
         };
     }

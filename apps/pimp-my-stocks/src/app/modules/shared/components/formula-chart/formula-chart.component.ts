@@ -7,24 +7,13 @@ import {
     AfterViewInit,
     Output,
     EventEmitter,
+    HostListener,
+    OnDestroy,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import {
-    BaseIndicator,
-    IndicatorTransformResult,
-    RelativeStrengthIndexIndicator,
-} from '@sic/indicator';
-import Chart, {
-    ChartConfiguration,
-    ChartData,
-    ChartDataset,
-    ChartTypeRegistry,
-} from 'chart.js/auto';
-import { DateTime } from 'luxon';
-import * as merge from 'deepmerge';
+import { BaseIndicator, IndicatorTransformResult } from '@sic/indicator';
 import { MatDialog } from '@angular/material/dialog';
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
-import { ChartPanel } from '@sic/chart';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 import {
     EditConfigurationResult,
@@ -32,7 +21,9 @@ import {
 } from '../edit-indicators-dialog/edit-indicators-dialog.component';
 import { Condition, EqualityType } from '@sic/condition';
 import { FormBuilder } from '@angular/forms';
-import { CrosshairOptions } from 'chartjs-plugin-crosshair';
+import * as echarts from 'echarts';
+import { ChartPanel } from '../../models/chart-panel';
+import { DateTime } from 'luxon';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -40,8 +31,8 @@ import { CrosshairOptions } from 'chartjs-plugin-crosshair';
     styleUrls: ['./formula-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormulaChartComponent implements AfterViewInit {
-    @ViewChild('chart') canvas?: ElementRef<HTMLCanvasElement>;
+export class FormulaChartComponent implements AfterViewInit, OnDestroy {
+    @ViewChild('chart') chartContainer?: ElementRef<HTMLDivElement>;
 
     private _panel: ChartPanel = new ChartPanel(0, []);
     @Input()
@@ -67,7 +58,7 @@ export class FormulaChartComponent implements AfterViewInit {
     @Output() addClicked: EventEmitter<void> = new EventEmitter<void>();
     @Output() deleteClicked: EventEmitter<void> = new EventEmitter<void>();
 
-    private chart: Chart | null = null;
+    private chart: echarts.ECharts | null = null;
 
     constructor(public dialog: MatDialog, public readonly fb: FormBuilder) {}
 
@@ -76,24 +67,21 @@ export class FormulaChartComponent implements AfterViewInit {
     }
 
     private async redrawChart(): Promise<void> {
-        if (this.canvas === undefined) {
-            return;
-        }
-
-        const ctx: CanvasRenderingContext2D | null =
-            this.canvas.nativeElement.getContext('2d');
-
-        if (ctx === null) {
+        if (this.chartContainer === undefined) {
             return;
         }
 
         // Reset the chart
         if (this.chart != null) {
-            this.chart.destroy();
+            this.chart.dispose();
             this.chart = null;
         }
 
         if (this.chartResult === null) {
+            return;
+        }
+
+        if (this.panel.indicators.length === 0) {
             return;
         }
 
@@ -109,6 +97,7 @@ export class FormulaChartComponent implements AfterViewInit {
         // TODO: Remove condition placeholder data & calculations
 
         // Get conditions datasets
+        /*
         const condition = new Condition(
             new RelativeStrengthIndexIndicator(this.fb),
             80,
@@ -126,84 +115,103 @@ export class FormulaChartComponent implements AfterViewInit {
                 return null;
             })
         );
+        */
 
-        results.push({
-            datasets: [
-                {
-                    type: 'line',
-                    label: 'Buy',
-                    data: conditionResult,
-                    borderColor: 'green',
-                    yAxisID: 'price-y-axis',
-                    showLine: false,
-                    fill: false,
-                    pointStyle: 'rectRot',
-                    pointRadius: 4,
-                    pointHoverRadius: 1,
-                    order: 1,
-                },
-            ],
-            options: {},
-        });
-
-        const datasets: ChartDataset[] = [];
-
+        // Add all y axis
+        const yAxis: echarts.EChartOption.YAxis[] = [];
         for (const result of results) {
-            for (const dataset of result.datasets) {
-                datasets.push(dataset);
+            if (result.yAxis !== undefined) {
+                // Add this axis if not already added
+                if (
+                    yAxis.find((axis) => axis.id === result.yAxis?.id) ===
+                    undefined
+                ) {
+                    yAxis.push(result.yAxis);
+                }
             }
         }
 
-        // Draw chart on the canvas
-        const data: ChartData = {
-            labels: this.chartResult.quotes.map((s) =>
-                DateTime.fromISO(s.date).setLocale('fr').toLocaleString()
-            ),
-            datasets: datasets,
-        };
+        // Add all datasets
 
-        const mergedOption =
-            (merge.all(
-                results.map((i) => i.options as object)
-            ) as ChartConfiguration['options']) ?? {};
+        const datasetSources: (number | string | null)[][] = [
+            ['Date', ...this.chartResult.quotes.map((s) => s.date)],
+        ];
+        const series: echarts.EChartOption.Series[] = [];
 
-        const crossHairOptions: CrosshairOptions = {
-            line: {
-                color: '#F66',
-                width: 1,
-            },
-            sync: {
-                enabled: true,
-                group: 1,
-                suppressTooltips: false,
-            },
-            zoom: {
-                enabled: true,
-                zoomboxBackgroundColor: 'rgba(66,133,244,0.2)',
-                zoomboxBorderColor: '#48F',
-                zoomButtonText: 'Reset Zoom',
-                zoomButtonClass: 'reset-zoom',
-            },
-            snap: {
-                enabled: true,
-            },
-        };
+        for (const result of results) {
+            const useAxis = yAxis.find((axis) => axis.id === result.yAxisId);
 
-        mergedOption.plugins = {
+            if (useAxis === undefined) {
+                console.error(`No axis found for id '${result.yAxisId}'`);
+                return;
+            }
+
+            const axisIndex = yAxis.indexOf(useAxis);
+
+            if (axisIndex === undefined) {
+                console.error(`No axis found for id '${result.yAxisId}'`);
+                return;
+            }
+
+            datasetSources.push([result.label, ...result.dataset]);
+            (result.series as any).yAxisIndex = axisIndex;
+            series.push(result.series);
+        }
+
+        // Initialize the echarts instance
+        const myChart: echarts.ECharts = echarts.init(
+            this.chartContainer.nativeElement
+        );
+
+        // Draw the chart
+        myChart.setOption({
+            legend: {},
+            toolbox: {
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none',
+                    },
+                    restore: {},
+                    saveAsImage: {},
+                },
+            },
             tooltip: {
-                mode: 'nearest',
-                intersect: false,
+                trigger: 'axis',
+                axisPointer: { type: 'cross' },
             },
-            crosshair: crossHairOptions,
-        };
+            dataset: {
+                source: datasetSources,
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    axisLabel: {
+                        formatter: function (value: string) {
+                            return DateTime.fromISO(value)
+                                .setLocale('fr-FR')
+                                .toLocaleString();
+                        },
+                    },
+                },
+            ],
+            yAxis: yAxis,
+            series: series,
+            dataZoom: [
+                {
+                    type: 'inside',
+                },
+                {
+                    type: 'slider',
+                },
+            ],
+        });
 
-        const config: ChartConfiguration = {
-            type: 'line',
-            data: data,
-            options: mergedOption,
-        };
+        this.chart = myChart;
+    }
 
-        this.chart = new Chart(ctx, config);
+    @HostListener('window:resize')
+    private onResize() {
+        this.chart?.resize();
     }
 
     openAddDialog(): void {
@@ -276,5 +284,9 @@ export class FormulaChartComponent implements AfterViewInit {
 
                 this.redrawChart();
             });
+    }
+
+    ngOnDestroy(): void {
+        this.chart?.dispose();
     }
 }
