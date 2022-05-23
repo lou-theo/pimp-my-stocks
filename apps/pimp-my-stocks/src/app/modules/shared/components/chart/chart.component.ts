@@ -5,6 +5,8 @@ import {
     Input,
     OnInit,
     OnDestroy,
+    ViewChildren,
+    QueryList,
 } from '@angular/core';
 import { ApiService } from '@sic/api-interfaces/services';
 import { DateTime } from 'luxon';
@@ -27,6 +29,7 @@ import {
     SimpleMovingAverageIndicator,
 } from '@sic/indicator';
 import { ChartPanel } from '../../models/chart-panel';
+import { FormulaChartComponent } from '../formula-chart/formula-chart.component';
 
 @Component({
     selector: 'sic-chart',
@@ -35,6 +38,9 @@ import { ChartPanel } from '../../models/chart-panel';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChildren(FormulaChartComponent)
+    charts?: QueryList<FormulaChartComponent>;
+
     private _symbol: string | null = null;
     @Input() set symbol(value: string | null) {
         this._symbol = value;
@@ -162,6 +168,18 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         const panelIndex: number = this.panels.indexOf(panel);
         this.panels.splice(panelIndex, 1);
         this.panels = [...this.panels];
+    }
+
+    public onMouseHover(event: MouseEvent): void {
+        this.charts?.forEach((formulaChart) => {
+            formulaChart.showTooltip(event);
+        });
+    }
+
+    public onMouseLeave(): void {
+        this.charts?.forEach((formulaChart) => {
+            formulaChart.hideTooltip();
+        });
     }
 
     ngOnDestroy(): void {

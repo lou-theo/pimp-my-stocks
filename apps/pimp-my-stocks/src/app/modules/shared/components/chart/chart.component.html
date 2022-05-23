@@ -41,6 +41,8 @@
                     [canDelete]="panels.length > 1"
                     (addClicked)="addPanel(panel)"
                     (deleteClicked)="removePanel(panel)"
+                    (mouseHover)="onMouseHover($event)"
+                    (mouseLeave)="onMouseLeave()"
                 ></sic-formula-chart>
                 <mat-divider *ngIf="i !== panels.length - 1"></mat-divider>
             </ng-container>

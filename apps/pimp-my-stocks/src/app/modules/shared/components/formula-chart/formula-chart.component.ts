@@ -61,6 +61,9 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
 
     @Output() addClicked: EventEmitter<void> = new EventEmitter<void>();
     @Output() deleteClicked: EventEmitter<void> = new EventEmitter<void>();
+    @Output() mouseHover: EventEmitter<MouseEvent> =
+        new EventEmitter<MouseEvent>();
+    @Output() mouseLeave: EventEmitter<void> = new EventEmitter<void>();
 
     private chart: echarts.ECharts | null = null;
 
@@ -193,6 +196,14 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
             this.chartContainer.nativeElement
         );
 
+        myChart.getZr().on('mousemove', (params: { event: MouseEvent }) => {
+            this.mouseHover.emit(params.event);
+        });
+
+        myChart.on('globalout', () => {
+            this.mouseLeave.emit();
+        });
+
         // Draw the chart
         myChart.setOption({
             legend: {},
@@ -314,6 +325,20 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
 
                 this.redrawChart();
             });
+    }
+
+    public showTooltip(event: MouseEvent) {
+        this.chart?.dispatchAction({
+            type: 'showTip',
+            x: event.offsetX,
+            y: event.offsetY,
+        });
+    }
+
+    public hideTooltip() {
+        this.chart?.dispatchAction({
+            type: 'hideTip',
+        });
     }
 
     ngOnDestroy(): void {
