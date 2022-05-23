@@ -7,6 +7,11 @@ export type IndicatorTransformResult = {
     label: string;
 
     /**
+     * The indentifier used by this indicator.
+     */
+    identifier: string;
+
+    /**
      * The id of the y axis used by the indicator.
      * If `yAxis` is not undefined, `yAxisId` will be equal to `yAxis.id`.
      */
@@ -25,5 +30,5 @@ export type IndicatorTransformResult = {
     /**
      * Series for this dataset.
      */
-    series: echarts.EChartOption.Series;
+    series: echarts.EChartOption.SeriesLine | echarts.EChartOption.SeriesBar;
 };

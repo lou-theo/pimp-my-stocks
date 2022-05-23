@@ -1,4 +1,5 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
+import { intersection, union } from '@sic/core';
 import { ComparisonType } from '../types/comparison-type.enum';
 import { Condition } from './condition';
 
@@ -9,18 +10,17 @@ export class ConditionGroup {
     ) {}
 
     public async evaluate(
-        chartResult: ChartResultArrayDto,
-        date: string
-    ): Promise<boolean> {
-        const evaluations: Promise<boolean>[] = this.conditions.map((c) =>
-            c.evaluate(chartResult, date)
+        chartResult: ChartResultArrayDto
+    ): Promise<Set<number>> {
+        const evaluations: Promise<Set<number>>[] = this.conditions.map((c) =>
+            c.evaluate(chartResult)
         );
-        const results: boolean[] = await Promise.all(evaluations);
+        const results: Set<number>[] = await Promise.all(evaluations);
 
         if (this.comparisonType === ComparisonType.AND) {
-            return results.every((r) => r);
+            return intersection(results);
         } else {
-            return results.some((r) => r);
+            return union(results);
         }
     }
 }

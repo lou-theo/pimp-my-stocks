@@ -42,6 +42,7 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
         return {
+            identifier: this.identifier,
             label: this.label,
             dataset: await this.calculate(chartResult),
             series: {
@@ -55,7 +56,7 @@ export class RelativeStrengthIndexIndicator extends Indicator<number[]> {
                         {
                             yAxis: this.configurator.configuration.upperLimit,
                         },
-                    ],
+                    ] as any,
                 },
             },
             yAxisId: this.yAxisId,

@@ -11,7 +11,11 @@ import {
     OnDestroy,
 } from '@angular/core';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import { BaseIndicator, IndicatorTransformResult } from '@sic/indicator';
+import {
+    BaseIndicator,
+    IndicatorTransformResult,
+    RelativeStrengthIndexIndicator,
+} from '@sic/indicator';
 import { MatDialog } from '@angular/material/dialog';
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
@@ -94,29 +98,6 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
 
         const results: IndicatorTransformResult[] = await Promise.all(promises);
 
-        // TODO: Remove condition placeholder data & calculations
-
-        // Get conditions datasets
-        /*
-        const condition = new Condition(
-            new RelativeStrengthIndexIndicator(this.fb),
-            80,
-            EqualityType.SUPERIOR
-        );
-
-        const conditionResult: (number | null)[] = await Promise.all(
-            this.chartResult.quotes.map(async (q) => {
-                if (this.chartResult !== null) {
-                    return (await condition.evaluate(this.chartResult, q.date))
-                        ? q.close
-                        : null;
-                }
-
-                return null;
-            })
-        );
-        */
-
         // Add all y axis
         const yAxis: echarts.EChartOption.YAxis[] = [];
         for (const result of results) {
@@ -153,8 +134,57 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
                 return;
             }
 
+            if (result.identifier === 'price') {
+                // TODO: Remove condition placeholder data & calculations
+
+                // Show condition result on the price chart
+                const condition = new Condition(
+                    new RelativeStrengthIndexIndicator(this.fb),
+                    80,
+                    EqualityType.SUPERIOR
+                );
+
+                const conditionResult: Set<number> = await condition.evaluate(
+                    this.chartResult
+                );
+
+                const points: any[] = [
+                    {
+                        name: 'highest',
+                        type: 'max',
+                        symbol: 'arrow',
+                        symbolSize: 10,
+                        itemStyle: {
+                            color: 'green',
+                        },
+                    },
+                ];
+
+                // TODO: Get coord from the condition result
+                conditionResult.forEach((index) => {
+                    points.push({
+                        name: 'test',
+                        symbol: 'arrow',
+                        symbolSize: 10,
+                        coord: [index, this.chartResult?.quotes[index].close],
+                        itemStyle: {
+                            color: 'green',
+                        },
+                    });
+                });
+
+                result.series.markPoint = {
+                    label: {
+                        formatter: (params: { name: string }) => {
+                            return '';
+                        },
+                    },
+                    data: points,
+                };
+            }
+
             datasetSources.push([result.label, ...result.dataset]);
-            (result.series as any).yAxisIndex = axisIndex;
+            result.series.yAxisIndex = axisIndex;
             series.push(result.series);
         }
 

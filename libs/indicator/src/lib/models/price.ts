@@ -46,6 +46,7 @@ export class PriceIndicator extends Indicator<number[]> {
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
         return {
+            identifier: this.identifier,
             label: `${this.label} (${chartResult.meta.currency})`,
             dataset: await this.calculate(chartResult),
             yAxisId: this.yAxisId,
@@ -58,7 +59,10 @@ export class PriceIndicator extends Indicator<number[]> {
                     formatter: `{value} ${chartResult.meta.currency}`,
                 },
             },
-            series: { type: 'line', seriesLayoutBy: 'row' },
+            series: {
+                type: 'line',
+                seriesLayoutBy: 'row',
+            },
         };
     }
 }

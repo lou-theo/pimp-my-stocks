@@ -4,53 +4,51 @@ import { EqualityType } from '../types/equality-type.enum';
 
 export class Condition {
     constructor(
-        public sourceIndicator: Indicator<number[]>,
-        public comparedValue: Indicator<number[]> | number,
+        public sourceIndicator: Indicator<(number | null)[]>,
+        public comparedValue: Indicator<(number | null)[]> | number,
         public equalityType: EqualityType
     ) {}
 
+    /**
+     * Evaluate the condition on the dataset.
+     * @param chartResult The chart data.
+     * @returns An array of indexes where the condition is true.
+     */
     public async evaluate(
-        chartResult: ChartResultArrayDto,
-        date: string
-    ): Promise<boolean> {
-        const sourceValue: number | null = await this.getValueAtDate(
-            chartResult,
-            date,
-            this.sourceIndicator
-        );
-        const comparedValue: number | null =
-            this.comparedValue instanceof BaseIndicator
-                ? await this.getValueAtDate(
-                      chartResult,
-                      date,
-                      this.comparedValue
-                  )
-                : this.comparedValue;
+        chartResult: ChartResultArrayDto
+    ): Promise<Set<number>> {
+        const sourceValues: (number | null)[] =
+            await this.sourceIndicator.calculate(chartResult);
 
-        if (sourceValue === null || comparedValue === null) {
-            return false;
+        let getActualComparedValue: (index: number) => number | null;
+        let indicatorComparedValues: (number | null)[] = [];
+
+        if (this.comparedValue instanceof BaseIndicator) {
+            indicatorComparedValues = await this.comparedValue.calculate(
+                chartResult
+            );
+            getActualComparedValue = (index) => indicatorComparedValues[index];
+        } else {
+            getActualComparedValue = (index) => this.comparedValue as number;
         }
 
-        return this.compareValues(sourceValue, comparedValue);
-    }
+        const matchingIndices: Set<number> = new Set();
 
-    private async getValueAtDate(
-        chartResult: ChartResultArrayDto,
-        date: string,
-        indicator: Indicator<number[]>
-    ): Promise<number | null> {
-        const dateIndex: number | undefined = chartResult.quotes
-            .map((quote, index) => {
-                return { date: quote.date, index: index };
-            })
-            .find((x) => x.date === date)?.index;
+        for (const [index, value] of sourceValues.entries()) {
+            const actualComparedValue: number | null =
+                getActualComparedValue(index);
 
-        if (dateIndex === undefined) {
-            return null;
+            if (value === null || actualComparedValue === null) {
+                continue;
+            }
+
+            if (this.compareValues(value, actualComparedValue)) {
+                console.log(value, actualComparedValue, true);
+                matchingIndices.add(index);
+            }
         }
 
-        const values = await indicator.calculate(chartResult);
-        return values[dateIndex];
+        return matchingIndices;
     }
 
     private compareValues(sourceValue: number, comparedValue: number): boolean {

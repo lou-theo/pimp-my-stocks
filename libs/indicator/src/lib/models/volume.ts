@@ -27,6 +27,7 @@ export class VolumeIndicator extends Indicator<number[]> {
         const maxVolume = Math.max(...result);
 
         return {
+            identifier: this.identifier,
             label: this.label,
             dataset: await this.calculate(chartResult),
             series: {

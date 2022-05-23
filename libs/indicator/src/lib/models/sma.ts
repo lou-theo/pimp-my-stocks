@@ -47,6 +47,7 @@ export class SimpleMovingAverageIndicator extends Indicator<(number | null)[]> {
         chartResult: ChartResultArrayDto
     ): Promise<IndicatorTransformResult> {
         return {
+            identifier: this.identifier,
             label: this.label,
             dataset: await this.calculate(chartResult),
             yAxisId: this.yAxisId,
