@@ -182,6 +182,12 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
+    public onZoomChange(event: echarts.SliderDataZoomEvent): void {
+        this.charts?.forEach((formulaChart) => {
+            formulaChart.zoom(event);
+        });
+    }
+
     ngOnDestroy(): void {
         this.subscriptions.unsubscribe();
     }

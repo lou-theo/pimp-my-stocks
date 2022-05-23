@@ -64,6 +64,8 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
     @Output() mouseHover: EventEmitter<MouseEvent> =
         new EventEmitter<MouseEvent>();
     @Output() mouseLeave: EventEmitter<void> = new EventEmitter<void>();
+    @Output() zoomChange: EventEmitter<echarts.SliderDataZoomEvent> =
+        new EventEmitter<echarts.SliderDataZoomEvent>();
 
     private chart: echarts.ECharts | null = null;
 
@@ -151,17 +153,7 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
                     this.chartResult
                 );
 
-                const points: any[] = [
-                    {
-                        name: 'highest',
-                        type: 'max',
-                        symbol: 'arrow',
-                        symbolSize: 10,
-                        itemStyle: {
-                            color: 'green',
-                        },
-                    },
-                ];
+                const points: any[] = [];
 
                 // TODO: Get coord from the condition result
                 conditionResult.forEach((index) => {
@@ -203,6 +195,21 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
         myChart.on('globalout', () => {
             this.mouseLeave.emit();
         });
+
+        myChart.on(
+            'datazoom',
+            (
+                params:
+                    | echarts.SliderDataZoomEvent
+                    | echarts.InsideDataZoomEvent
+            ) => {
+                const sliderEvent: echarts.SliderDataZoomEvent =
+                    params.batch !== undefined
+                        ? params.batch[0]
+                        : (params as echarts.SliderDataZoomEvent);
+                this.zoomChange.emit(sliderEvent);
+            }
+        );
 
         // Draw the chart
         myChart.setOption({
@@ -338,6 +345,24 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
     public hideTooltip() {
         this.chart?.dispatchAction({
             type: 'hideTip',
+        });
+    }
+
+    public zoom(zoom: echarts.SliderDataZoomEvent) {
+        const currentZoom: echarts.EChartOption.DataZoom | undefined =
+            this.chart?.getOption().dataZoom?.[0];
+
+        if (
+            currentZoom === undefined ||
+            (currentZoom.start === zoom.start && currentZoom.end === zoom.end)
+        ) {
+            return;
+        }
+
+        this.chart?.dispatchAction({
+            type: 'dataZoom',
+            start: zoom.start,
+            end: zoom.end,
         });
     }
 

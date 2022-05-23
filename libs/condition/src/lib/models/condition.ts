@@ -43,7 +43,6 @@ export class Condition {
             }
 
             if (this.compareValues(value, actualComparedValue)) {
-                console.log(value, actualComparedValue, true);
                 matchingIndices.add(index);
             }
         }
