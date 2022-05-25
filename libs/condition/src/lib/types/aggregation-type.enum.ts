@@ -1,8 +1,8 @@
 export enum AggregationType {
-    MIN = 'Minimum',
-    MAX = 'Maximum',
-    AVERAGE = 'Moyenne',
-    MEDIAN = 'Mediane',
+    MIN = 1,
+    MAX = 2,
+    AVERAGE = 3,
+    MEDIAN = 4,
 }
 
 export const AggregationTypeLabelMapping: Record<AggregationType, string> = {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Condition } from '@sic/condition';
 
 @Component({
     templateUrl: './strategy.component.html',
@@ -6,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class StrategyComponent {
     public currentSymbol: string | null = null;
+
+    conditions: Condition[] = [];
+    onConditionUpdated(condition: Condition): void {
+        this.conditions = [condition];
+    }
 }

@@ -28,6 +28,7 @@ import { FormBuilder } from '@angular/forms';
 import * as echarts from 'echarts';
 import { ChartPanel } from '../../models/chart-panel';
 import { DateTime } from 'luxon';
+import { union } from '@sic/core';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -55,6 +56,16 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
     }
     get chartResult(): ChartResultArrayDto | null {
         return this._chartResult;
+    }
+
+    private _conditions: Condition[] = [];
+    @Input()
+    set conditions(value: Condition[]) {
+        this._conditions = value;
+        this.redrawChart();
+    }
+    get conditions(): Condition[] {
+        return this._conditions;
     }
 
     @Input() canDelete = true;
@@ -139,19 +150,19 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
                 return;
             }
 
-            if (result.identifier === 'price') {
-                // TODO: Remove condition placeholder data & calculations
+            if (result.identifier === 'price' && this.conditions.length !== 0) {
+                const conditionPromises: Promise<Set<number>>[] = [];
 
-                // Show condition result on the price chart
-                const condition = new Condition(
-                    new RelativeStrengthIndexIndicator(this.fb),
-                    80,
-                    EqualityType.SUPERIOR
-                );
+                for (const condition of this.conditions) {
+                    conditionPromises.push(
+                        condition.evaluate(this.chartResult)
+                    );
+                }
 
-                const conditionResult: Set<number> = await condition.evaluate(
-                    this.chartResult
+                const conditionResults: Set<number>[] = await Promise.all(
+                    conditionPromises
                 );
+                const conditionResult: Set<number> = union(conditionResults);
 
                 const points: any[] = [];
 

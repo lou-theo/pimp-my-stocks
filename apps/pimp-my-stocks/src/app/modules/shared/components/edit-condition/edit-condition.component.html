@@ -10,7 +10,7 @@
         <mat-select [formControl]="getControlFor('aggregationType')">
             <mat-option
                 *ngFor="let type of AggregationTypeLabelMapping | keyvalue"
-                [value]="type.key"
+                [value]="+type.key"
             >
                 {{ type.value }}
             </mat-option>
@@ -19,21 +19,26 @@
     <span>du</span>
     <mat-form-field appearance="outline">
         <mat-label>Indicateur</mat-label>
-        <mat-select [formControl]="getControlFor('indicatorIndex')">
+        <mat-select (selectionChange)="onIndicatorSelected($event)">
             <mat-optgroup
                 *ngFor="let category of indicatorService.indicators"
                 [label]="category.displayName"
             >
                 <mat-option
                     *ngFor="let indicator of category.indicators"
-                    [value]="indicator.index"
+                    [value]="indicator.createIndicator"
                 >
                     {{ indicator.displayName }}
                 </mat-option>
             </mat-optgroup>
         </mat-select>
     </mat-form-field>
-    <button mat-icon-button>
+    <button
+        *ngIf="getControlFor('indicator').value !== null"
+        type="button"
+        mat-icon-button
+        (click)="openEditDialog()"
+    >
         <mat-icon>settings</mat-icon>
     </button>
     <span>sur les</span>
@@ -47,18 +52,19 @@
         <mat-select [formControl]="getControlFor('equalityType')">
             <mat-option
                 *ngFor="let type of EqualityTypeLabelMapping | keyvalue"
-                [value]="type.key"
+                [value]="+type.key"
             >
                 {{ type.value }}
             </mat-option>
         </mat-select>
     </mat-form-field>
     <span>à</span>
-    <mat-form-field
-        appearance="outline"
-        [formControl]="getControlFor('comparedValue')"
-    >
+    <mat-form-field appearance="outline">
         <mat-label>Valeur</mat-label>
-        <input type="number" matInput />
+        <input
+            type="number"
+            matInput
+            [formControl]="getControlFor('comparedValue')"
+        />
     </mat-form-field>
 </form>

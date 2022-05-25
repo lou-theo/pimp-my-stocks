@@ -30,6 +30,7 @@ import {
 } from '@sic/indicator';
 import { ChartPanel } from '../../models/chart-panel';
 import { FormulaChartComponent } from '../formula-chart/formula-chart.component';
+import { Condition } from '@sic/condition';
 
 @Component({
     selector: 'sic-chart',
@@ -46,6 +47,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
         this._symbol = value;
         this.updateChart();
     }
+
+    @Input()
+    conditions: Condition[] = [];
 
     public intervalControl: FormControl = new FormControl(
         '1mo' as ChartInterval

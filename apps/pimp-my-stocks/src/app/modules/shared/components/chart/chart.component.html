@@ -39,6 +39,7 @@
                     [chartResult]="chartResult$ | async"
                     [panel]="panel"
                     [canDelete]="panels.length > 1"
+                    [conditions]="conditions"
                     (addClicked)="addPanel(panel)"
                     (deleteClicked)="removePanel(panel)"
                     (mouseHover)="onMouseHover($event)"

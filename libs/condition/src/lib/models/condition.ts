@@ -1,12 +1,16 @@
 import { ChartResultArrayDto } from '@sic/api-interfaces/models';
+import { median, notNull, sum } from '@sic/core';
 import { BaseIndicator, Indicator } from '@sic/indicator';
+import { AggregationType } from '../types/aggregation-type.enum';
 import { EqualityType } from '../types/equality-type.enum';
 
 export class Condition {
     constructor(
+        public aggregationType: AggregationType,
         public sourceIndicator: Indicator<(number | null)[]>,
-        public comparedValue: Indicator<(number | null)[]> | number,
-        public equalityType: EqualityType
+        public range: number,
+        public equalityType: EqualityType,
+        public comparedValue: Indicator<(number | null)[]> | number
     ) {}
 
     /**
@@ -34,20 +38,50 @@ export class Condition {
 
         const matchingIndices: Set<number> = new Set();
 
-        for (const [index, value] of sourceValues.entries()) {
+        for (const [index, _] of sourceValues.entries()) {
+            const actualSourceValue: number | null = this.aggregateRange(
+                sourceValues,
+                index
+            );
+
             const actualComparedValue: number | null =
                 getActualComparedValue(index);
 
-            if (value === null || actualComparedValue === null) {
+            if (actualSourceValue === null || actualComparedValue === null) {
                 continue;
             }
 
-            if (this.compareValues(value, actualComparedValue)) {
+            if (this.compareValues(actualSourceValue, actualComparedValue)) {
                 matchingIndices.add(index);
             }
         }
 
         return matchingIndices;
+    }
+
+    private aggregateRange(
+        values: (number | null)[],
+        currentIndex: number
+    ): number | null {
+        const range: number[] = values
+            .slice(
+                Math.max(0, currentIndex - this.range + 1),
+                Math.min(currentIndex + 1, values.length)
+            )
+            .filter(notNull);
+
+        switch (this.aggregationType) {
+            case AggregationType.AVERAGE:
+                return sum(range) / range.length;
+            case AggregationType.MEDIAN:
+                return median(range);
+            case AggregationType.MAX:
+                return Math.max(...range);
+            case AggregationType.MIN:
+                return Math.min(...range);
+            default:
+                return null;
+        }
     }
 
     private compareValues(sourceValue: number, comparedValue: number): boolean {
@@ -64,6 +98,8 @@ export class Condition {
                 return sourceValue > comparedValue;
             case EqualityType.SUPERIOR_OR_EQUAL:
                 return sourceValue >= comparedValue;
+            default:
+                return false;
         }
     }
 }

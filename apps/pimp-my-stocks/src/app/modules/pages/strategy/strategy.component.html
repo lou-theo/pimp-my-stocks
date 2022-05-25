@@ -3,12 +3,18 @@
         fxFlex="1 0 auto"
         (symbolSelected)="currentSymbol = $event"
     ></sic-quote-search>
-    <sic-chart fxFlex="70%" [symbol]="currentSymbol"></sic-chart>
+    <sic-chart
+        fxFlex="70%"
+        [symbol]="currentSymbol"
+        [conditions]="conditions"
+    ></sic-chart>
 </div>
 <div class="conditions" fxLayout="row">
     <div fxFlex="1 1 auto">
         <h1>Conditions d'entrée</h1>
-        <sic-edit-condition></sic-edit-condition>
+        <sic-edit-condition
+            (conditionUpdated)="onConditionUpdated($event)"
+        ></sic-edit-condition>
     </div>
     <mat-divider [vertical]="true"></mat-divider>
     <div fxFlex="1 1 auto">
