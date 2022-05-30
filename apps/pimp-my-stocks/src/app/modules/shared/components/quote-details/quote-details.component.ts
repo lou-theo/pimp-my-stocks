@@ -1,36 +1,34 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { QuoteSummaryDto } from '@sic/api-interfaces/models';
 import { ApiService } from '@sic/api-interfaces/services';
 import { QuoteType } from '@sic/chart';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 
 @Component({
     selector: 'sic-quote-details',
     templateUrl: './quote-details.component.html',
     styleUrls: ['./quote-details.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuoteDetailsComponent {
-    @Input() set symbol(value: string | null) {
-        if (value === null) {
-            this.summary.next(null);
-        } else {
-            firstValueFrom(
-                this.apiService.yahooControllerQuoteSummary({
-                    symbol: value,
-                })
-            ).then((summary) => {
-                this.summary.next(summary);
-            });
-        }
-    }
-
+export class QuoteDetailsComponent implements OnChanges {
     public QuoteType = QuoteType;
 
-    private summary: BehaviorSubject<QuoteSummaryDto | null> =
-        new BehaviorSubject<QuoteSummaryDto | null>(null);
-    public summary$: Observable<QuoteSummaryDto | null> =
-        this.summary.asObservable();
+    @Input() symbol: string | null = null;
+
+    public summary: QuoteSummaryDto | null = null;
 
     constructor(private readonly apiService: ApiService) {}
+
+    public ngOnChanges(changes: SimpleChanges) {
+        if (changes['symbol']) {
+            const symbol: string | undefined = changes['symbol']?.currentValue;
+            if (!symbol) {
+                this.summary = null;
+            } else {
+                this.apiService
+                    .yahooControllerQuoteSummary({
+                        symbol,
+                    })
+                    .subscribe((response) => (this.summary = response));
+            }
+        }
+    }
 }

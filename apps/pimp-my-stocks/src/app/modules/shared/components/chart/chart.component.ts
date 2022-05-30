@@ -1,12 +1,12 @@
 import {
-    Component,
-    ChangeDetectionStrategy,
     AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
     Input,
-    OnInit,
     OnDestroy,
-    ViewChildren,
+    OnInit,
     QueryList,
+    ViewChildren,
 } from '@angular/core';
 import { ApiService } from '@sic/api-interfaces/services';
 import { DateTime } from 'luxon';
@@ -20,13 +20,13 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChartResultArrayDto } from '@sic/api-interfaces/models/chart-result-array-dto';
-import { ChartInterval, CHART_INTERVALS } from '@sic/chart';
+import { CHART_INTERVALS, ChartInterval } from '@sic/chart';
 import { isBeforeDateValidator } from '@sic/core';
 import {
-    PriceIndicator,
-    VolumeIndicator,
     OnBalanceVolumeIndicator,
+    PriceIndicator,
     SimpleMovingAverageIndicator,
+    VolumeIndicator,
 } from '@sic/indicator';
 import { ChartPanel } from '../../models/chart-panel';
 import { FormulaChartComponent } from '../formula-chart/formula-chart.component';

@@ -1,6 +1,6 @@
 <mat-card>
     <ng-container
-        *ngIf="summary$ | async as summary; else noData"
+        *ngIf="summary; else noData"
         [ngSwitch]="summary.quoteType?.quoteType"
     >
         <ng-container *ngSwitchCase="QuoteType.EQUITY">
