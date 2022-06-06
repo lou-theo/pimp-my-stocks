@@ -4,8 +4,11 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PagesModule } from './modules/pages/pages.module';
-import { SharedModule } from './modules/shared/shared.module';
+import { SharedModule } from '@shared/shared.module';
+import { QuoteInfoModule } from '@features/quote-info/quote-info.module';
+import { ChartModule } from '@features/chart/chart.module';
+import { HomeModule } from '@features/home/home.module';
+import { StrategyConceptionModule } from '@features/strategy-conception/strategy-conception.module';
 
 @NgModule({
     declarations: [AppComponent],
@@ -14,7 +17,13 @@ import { SharedModule } from './modules/shared/shared.module';
         AppRoutingModule,
         HttpClientModule,
         BrowserAnimationsModule,
-        PagesModule,
+
+        // Features Modules
+        HomeModule,
+        QuoteInfoModule,
+        StrategyConceptionModule,
+        ChartModule,
+
         SharedModule,
     ],
     providers: [],

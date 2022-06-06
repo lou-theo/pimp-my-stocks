@@ -3,7 +3,19 @@
     "compilerOptions": {
         "outDir": "../../dist/out-tsc",
         "types": [],
-        "target": "ES2017"
+        "target": "ES2017",
+        "baseUrl": ".",
+        "paths": {
+            "@sic/api-interfaces/*": ["../../libs/api-interfaces/src/lib/*"],
+            "@sic/chart": ["../../libs/chart/src/index.ts"],
+            "@sic/condition": ["../../libs/condition/src/index.ts"],
+            "@sic/core": ["../../libs/core/src/index.ts"],
+            "@sic/indicator": ["../../libs/indicator/src/index.ts"],
+            "@core/*": ["src/app/core/*"],
+            "@environments/*": ["src/environments/*"],
+            "@features/*": ["src/app/features/*"],
+            "@shared/*": ["src/app/shared/*"]
+        }
     },
     "files": ["src/main.ts", "src/polyfills.ts"],
     "include": ["src/**/*.d.ts", "../../types/*.d.ts"],
