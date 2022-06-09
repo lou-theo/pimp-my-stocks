@@ -1,9 +1,9 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ChartInterval } from '@sic/commons';
+import * as merge from 'deepmerge';
 import { DateTime } from 'luxon';
 import yahooFinance from 'yahoo-finance2';
-import {
-    ChartOptionsWithReturnArray,
-    ChartResultArray,
-} from 'yahoo-finance2/dist/esm/src/modules/chart';
+import { ChartOptionsWithReturnArray, ChartResultArray } from 'yahoo-finance2/dist/esm/src/modules/chart';
 import { QuoteSummaryOptions } from 'yahoo-finance2/dist/esm/src/modules/quoteSummary';
 import { QuoteSummaryResult } from 'yahoo-finance2/dist/esm/src/modules/quoteSummary-iface';
 import {
@@ -18,11 +18,7 @@ import {
     SearchQuoteYahooOption,
     SearchResult,
 } from 'yahoo-finance2/dist/esm/src/modules/search';
-
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ChartInterval } from '@sic/chart';
 import { PriceDto, QuoteSummaryDto } from '../models/yahoo.quote.dto';
-import * as merge from 'deepmerge';
 
 type SearchQuoteResult =
     | SearchQuoteYahooEquity
@@ -46,9 +42,7 @@ export class YahooService {
         let result: SearchResult;
         try {
             result = await yahooFinance.search(query);
-            return result.quotes.filter(
-                (q) => q.isYahooFinance === true
-            ) as SearchQuoteResult[];
+            return result.quotes.filter((q) => q.isYahooFinance === true) as SearchQuoteResult[];
         } catch (error: any) {
             return this.handleError(query, error, []);
         }
@@ -96,10 +90,7 @@ export class YahooService {
                 summaryProfile: result.summaryProfile,
                 quoteType: result.quoteType,
                 topHoldings: result.topHoldings,
-                price: merge.all([
-                    result.topHoldings ?? {},
-                    result.price ?? {},
-                ]) as PriceDto,
+                price: merge.all([result.topHoldings ?? {}, result.price ?? {}]) as PriceDto,
             };
         } catch (error: any) {
             return this.handleError(symbol, error, {});
@@ -133,16 +124,12 @@ export class YahooService {
     }
 
     private handleError<T>(symbol: string, error: any, defaultValue: T): T {
-        if (
-            error instanceof yahooFinance.errors['FailedYahooValidationError']
-        ) {
+        if (error instanceof yahooFinance.errors['FailedYahooValidationError']) {
             // Yahoo result was invalid
             console.warn(`Invalid result for "${symbol}": ${error.result}`);
             return error.result;
         } else {
-            console.warn(
-                `Couldn't get "${symbol}": [${error.name}] ${error.message}`
-            );
+            console.warn(`Couldn't get "${symbol}": [${error.name}] ${error.message}`);
 
             if (error instanceof yahooFinance.errors['HTTPError']) {
                 return null;

@@ -14,13 +14,14 @@
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "baseUrl": ".",
+        "typeRoots": [
+            "types",
+            "node_modules/@types"
+        ],
         "paths": {
-            "@sic/api-interfaces/*": ["libs/api-interfaces/src/lib/*"],
-            "@sic/chart": ["libs/chart/src/index.ts"],
-            "@sic/condition": ["libs/condition/src/index.ts"],
-            "@sic/core": ["libs/core/src/index.ts"],
-            "@sic/indicator": ["libs/indicator/src/index.ts"]
+            "@sic/commons": ["libs/commons/src/index.ts"]
         }
     },
+    "include": ["types/**/*"],
     "exclude": ["node_modules", "tmp"]
 }

@@ -2,13 +2,9 @@
     "version": 2,
     "projects": {
         "api": "apps/api",
-        "api-interfaces": "libs/api-interfaces",
-        "chart": "libs/chart",
-        "condition": "libs/condition",
-        "core": "libs/core",
-        "indicator": "libs/indicator",
         "pimp-my-stocks": "apps/pimp-my-stocks",
         "pimp-my-stocks-desktop": "apps/pimp-my-stocks-desktop",
-        "pimp-my-stocks-e2e": "apps/pimp-my-stocks-e2e"
+        "pimp-my-stocks-e2e": "apps/pimp-my-stocks-e2e",
+        "commons": "libs/commons"
     }
 }

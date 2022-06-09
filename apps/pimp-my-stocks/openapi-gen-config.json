@@ -1,0 +1,8 @@
+{
+    "$schema": "../../node_modules/ng-openapi-gen/ng-openapi-gen-schema.json",
+    "input": "http://localhost:3333/api/docs/yaml",
+    "output": "apps/pimp-my-stocks/src/app/core/api",
+    "ignoreUnusedModels": false,
+    "enumStyle": "upper",
+    "servicePrefix": "Api"
+}
