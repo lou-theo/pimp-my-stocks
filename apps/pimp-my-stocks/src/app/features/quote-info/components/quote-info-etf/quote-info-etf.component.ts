@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild,} from '@angular/core';
-import {QuoteSummaryDto} from '@sic/api-interfaces/models';
+import {QuoteSummaryDto} from "@core/api/models/quote-summary-dto";
 
 type ChartAndCanvas = {
     label: string;

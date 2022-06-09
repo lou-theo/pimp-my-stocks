@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { QuoteSummaryDto } from '@sic/api-interfaces/models/quote-summary-dto';
-import { ApiService } from '@sic/api-interfaces/services/api.service';
-import { QuoteType } from '@sic/chart';
+import {QuoteSummaryDto} from "@core/api/models/quote-summary-dto";
+import {ApiYahooService} from "@core/api/services/api-yahoo.service";
+import { QuoteType } from '@sic/commons';
 
 @Component({
     templateUrl: './quote-info.component.html',
@@ -13,7 +13,7 @@ export class QuoteInfoComponent {
     public symbol: string | null = null;
     public summary: QuoteSummaryDto | null = null;
 
-    constructor(private readonly apiService: ApiService) {}
+    constructor(private readonly apiService: ApiYahooService) {}
 
     public setSymbol(symbol: string | null): void {
         this.symbol = symbol;

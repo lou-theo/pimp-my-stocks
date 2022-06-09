@@ -1,4 +1,4 @@
-import { BaseIndicator } from '@sic/indicator';
+import {BaseIndicator} from "@core/services/indicator/indicator";
 
 export class ChartPanel {
     constructor(

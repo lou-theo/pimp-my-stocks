@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
-import { ChartInterval, isChartInterval } from '@sic/chart';
+import { ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ChartInterval, isChartInterval } from '@sic/commons';
 import { DateTime } from 'luxon';
 import { ChartResultArrayDto } from '../models/yahoo.chart.dto';
 import { QuoteSummaryDto } from '../models/yahoo.quote.dto';
@@ -8,7 +8,8 @@ import { SearchNewsDto, SearchQuoteDto } from '../models/yahoo.search.dto';
 
 import { YahooService } from '../services/yahoo.service';
 
-@Controller()
+@ApiTags('Yahoo')
+@Controller('yahoo')
 export class YahooController {
     constructor(private readonly yahooService: YahooService) {}
 
@@ -23,9 +24,8 @@ export class YahooController {
     }
 
     @Get('quotes/:symbol/summary')
-    async quoteSummary(
-        @Param('symbol') symbol: string
-    ): Promise<QuoteSummaryDto> {
+    @ApiResponse({ status: 200, type: QuoteSummaryDto })
+    async quoteSummary(@Param('symbol') symbol: string): Promise<QuoteSummaryDto> {
         return await this.yahooService.quoteSummary(symbol);
     }
 
@@ -37,16 +37,9 @@ export class YahooController {
         @Query('start') startPeriod?: string | null,
         @Query('interval') interval?: string | null
     ): Promise<ChartResultArrayDto> {
-        const startPeriodDate: DateTime = DateTime.fromISO(
-            startPeriod ?? DateTime.now().minus({ years: 1 }).toISO()
-        );
-        const chartInterval: ChartInterval =
-            interval != null && isChartInterval(interval) ? interval : '1mo';
+        const startPeriodDate: DateTime = DateTime.fromISO(startPeriod ?? DateTime.now().minus({ years: 1 }).toISO());
+        const chartInterval: ChartInterval = interval != null && isChartInterval(interval) ? interval : '1mo';
 
-        return await this.yahooService.chart(
-            symbol,
-            startPeriodDate,
-            chartInterval
-        );
+        return await this.yahooService.chart(symbol, startPeriodDate, chartInterval);
     }
 }

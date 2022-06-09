@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -8,29 +9,20 @@ import {
     QueryList,
     ViewChildren,
 } from '@angular/core';
-import { ApiService } from '@sic/api-interfaces/services';
-import { DateTime } from 'luxon';
-import {
-    BehaviorSubject,
-    firstValueFrom,
-    Observable,
-    ReplaySubject,
-    Subscription,
-} from 'rxjs';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ChartResultArrayDto } from '@sic/api-interfaces/models/chart-result-array-dto';
-import { CHART_INTERVALS, ChartInterval } from '@sic/chart';
-import { isBeforeDateValidator } from '@sic/core';
-import {
-    OnBalanceVolumeIndicator,
-    PriceIndicator,
-    SimpleMovingAverageIndicator,
-    VolumeIndicator,
-} from '@sic/indicator';
+import { ChartResultArrayDto } from '@core/api/models/chart-result-array-dto';
+import { ApiYahooService } from '@core/api/services/api-yahoo.service';
+import { Condition } from '@core/services/conditions/condition';
+import { OnBalanceVolumeIndicator } from '@core/services/indicator/obv';
+import { PriceIndicator } from '@core/services/indicator/price';
+import { SimpleMovingAverageIndicator } from '@core/services/indicator/sma';
+import { VolumeIndicator } from '@core/services/indicator/volume';
+import { isBeforeDateValidator } from '@core/validators/before-date';
+import { ChartInterval, CHART_INTERVALS } from '@sic/commons';
+import { DateTime } from 'luxon';
+import { BehaviorSubject, firstValueFrom, Observable, ReplaySubject, Subscription } from 'rxjs';
 import { ChartPanel } from '../../models/chart-panel';
 import { FormulaChartComponent } from '../formula-chart/formula-chart.component';
-import { Condition } from '@sic/condition';
 
 @Component({
     selector: 'sic-chart',
@@ -51,43 +43,30 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input()
     conditions: Condition[] = [];
 
-    public intervalControl: FormControl = new FormControl(
-        '1mo' as ChartInterval
-    );
+    public intervalControl: FormControl = new FormControl('1mo' as ChartInterval);
     public startDateControl: FormControl = new FormControl(
         DateTime.now().minus({ years: 1 }),
         isBeforeDateValidator(DateTime.now())
     );
 
-    private chartResult: ReplaySubject<ChartResultArrayDto | null> =
-        new ReplaySubject<ChartResultArrayDto | null>();
-    public chartResult$: Observable<ChartResultArrayDto | null> =
-        this.chartResult.asObservable();
+    private chartResult: ReplaySubject<ChartResultArrayDto | null> = new ReplaySubject<ChartResultArrayDto | null>();
+    public chartResult$: Observable<ChartResultArrayDto | null> = this.chartResult.asObservable();
 
-    private chartError: BehaviorSubject<string | null> = new BehaviorSubject<
-        string | null
-    >(null);
-    public chartError$: Observable<string | null> =
-        this.chartError.asObservable();
+    private chartError: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+    public chartError$: Observable<string | null> = this.chartError.asObservable();
 
     CHART_INTERVALS = CHART_INTERVALS;
 
-    private isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-        false
-    );
+    private isLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public isLoading$: Observable<boolean> = this.isLoading.asObservable();
 
     private subscriptions: Subscription = new Subscription();
 
     public panels: ChartPanel[];
 
-    constructor(private readonly apiService: ApiService, fb: FormBuilder) {
+    constructor(private readonly apiService: ApiYahooService, fb: FormBuilder) {
         this.panels = [
-            new ChartPanel(1, [
-                new PriceIndicator(fb),
-                new VolumeIndicator(),
-                new SimpleMovingAverageIndicator(fb),
-            ]),
+            new ChartPanel(1, [new PriceIndicator(fb), new VolumeIndicator(), new SimpleMovingAverageIndicator(fb)]),
             new ChartPanel(2, [new OnBalanceVolumeIndicator()]),
         ];
     }
@@ -133,19 +112,13 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
             chartData = await firstValueFrom(
                 this.apiService.yahooControllerChart({
                     symbol: this._symbol,
-                    start: this.startDateControl.valid
-                        ? this.startDateControl.value.toISO()
-                        : undefined,
-                    interval: this.intervalControl.valid
-                        ? this.intervalControl.value
-                        : undefined,
+                    start: this.startDateControl.valid ? this.startDateControl.value.toISO() : undefined,
+                    interval: this.intervalControl.valid ? this.intervalControl.value : undefined,
                 })
             );
         } catch (error: unknown) {
             if (error instanceof HttpErrorResponse) {
-                this.chartError.next(
-                    (error as HttpErrorResponse).error.message
-                );
+                this.chartError.next((error as HttpErrorResponse).error.message);
             } else {
                 this.chartError.next('Unknown error.');
             }

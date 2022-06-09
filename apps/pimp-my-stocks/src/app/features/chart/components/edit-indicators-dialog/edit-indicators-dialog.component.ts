@@ -6,11 +6,11 @@ import {
 } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {BaseIndicator} from "@core/services/indicator/indicator";
 import {
-    BaseIndicator,
     BaseIndicatorConfigurationFormGroup,
-    IndicatorConfiguration,
-} from '@sic/indicator';
+    IndicatorConfiguration
+} from "@core/services/indicator/indicator.configuration";
 import { startWith, Subscription } from 'rxjs';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 

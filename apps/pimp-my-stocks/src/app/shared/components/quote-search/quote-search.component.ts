@@ -7,8 +7,8 @@ import {
     EventEmitter,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { SearchQuoteDto } from '@sic/api-interfaces/models';
-import { ApiService } from '@sic/api-interfaces/services';
+import {SearchQuoteDto} from "@core/api/models/search-quote-dto";
+import {ApiYahooService} from "@core/api/services/api-yahoo.service";
 import {
     BehaviorSubject,
     debounceTime,
@@ -36,7 +36,7 @@ export class QuoteSearchComponent implements OnInit, OnDestroy {
 
     private subscriptions: Subscription = new Subscription();
 
-    constructor(private readonly apiService: ApiService) {}
+    constructor(private readonly apiService: ApiYahooService) {}
 
     ngOnInit(): void {
         this.subscriptions.add(

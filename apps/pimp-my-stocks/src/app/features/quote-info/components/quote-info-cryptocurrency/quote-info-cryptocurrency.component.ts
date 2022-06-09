@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { QuoteSummaryDto } from '@sic/api-interfaces/models';
+import {QuoteSummaryDto} from "@core/api/models/quote-summary-dto";
 
 @Component({
     selector: 'sic-quote-cryptocurrency-detail',

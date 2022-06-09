@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Condition } from '@sic/condition';
+import {Condition} from "@core/services/conditions/condition";
 
 @Component({
     templateUrl: './strategy-conception.component.html',

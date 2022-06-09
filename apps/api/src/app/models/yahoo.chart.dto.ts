@@ -38,26 +38,20 @@ export class ChartMetaDto implements Partial<ChartMeta> {
     validRanges: Array<string>;
 }
 
-export class ChartMetaTradingPeriodDto
-    implements Partial<ChartMetaTradingPeriod>
-{
+export class ChartMetaTradingPeriodDto implements Partial<ChartMetaTradingPeriod> {
     timezone: string;
     start: Date;
     end: Date;
     gmtoffset: number;
 }
 
-export class ChartMetaTradingPeriodsDto
-    implements Partial<ChartMetaTradingPeriods>
-{
+export class ChartMetaTradingPeriodsDto implements Partial<ChartMetaTradingPeriods> {
     pre?: Array<Array<ChartMetaTradingPeriodDto>>;
     post?: Array<Array<ChartMetaTradingPeriodDto>>;
     regular?: Array<Array<ChartMetaTradingPeriodDto>>;
 }
 
-export class ChartResultArrayQuoteDto
-    implements Partial<ChartResultArrayQuote>
-{
+export class ChartResultArrayQuoteDto implements Partial<ChartResultArrayQuote> {
     date: Date;
     high: number;
     low: number;

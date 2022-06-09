@@ -1,78 +1,68 @@
 {
-  "root": "apps/pimp-my-stocks-desktop",
-  "sourceRoot": "apps/pimp-my-stocks-desktop/src",
-  "projectType": "application",
-  "targets": {
-    "build": {
-      "executor": "nx-electron:build",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "options": {
-        "outputPath": "dist/apps/pimp-my-stocks-desktop",
-        "main": "apps/pimp-my-stocks-desktop/src/main.ts",
-        "tsConfig": "apps/pimp-my-stocks-desktop/tsconfig.app.json",
-        "assets": [
-          "apps/pimp-my-stocks-desktop/src/assets"
-        ]
-      },
-      "configurations": {
-        "production": {
-          "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "fileReplacements": [
-            {
-              "replace": "apps/pimp-my-stocks-desktop/src/environments/environment.ts",
-              "with": "apps/pimp-my-stocks-desktop/src/environments/environment.prod.ts"
+    "root": "apps/pimp-my-stocks-desktop",
+    "sourceRoot": "apps/pimp-my-stocks-desktop/src",
+    "projectType": "application",
+    "targets": {
+        "build": {
+            "executor": "nx-electron:build",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/apps/pimp-my-stocks-desktop",
+                "main": "apps/pimp-my-stocks-desktop/src/main.ts",
+                "tsConfig": "apps/pimp-my-stocks-desktop/tsconfig.app.json",
+                "assets": ["apps/pimp-my-stocks-desktop/src/assets"]
+            },
+            "configurations": {
+                "production": {
+                    "optimization": true,
+                    "extractLicenses": true,
+                    "inspect": false,
+                    "fileReplacements": [
+                        {
+                            "replace": "apps/pimp-my-stocks-desktop/src/environments/environment.ts",
+                            "with": "apps/pimp-my-stocks-desktop/src/environments/environment.prod.ts"
+                        }
+                    ]
+                }
             }
-          ]
+        },
+        "serve": {
+            "executor": "nx-electron:execute",
+            "options": {
+                "buildTarget": "pimp-my-stocks-desktop:build"
+            }
+        },
+        "package": {
+            "executor": "nx-electron:package",
+            "options": {
+                "name": "pimp-my-stocks-desktop",
+                "frontendProject": "pimp-my-stocks",
+                "outputPath": "dist/packages",
+                "prepackageOnly": true
+            }
+        },
+        "make": {
+            "executor": "nx-electron:make",
+            "options": {
+                "name": "pimp-my-stocks-desktop",
+                "frontendProject": "pimp-my-stocks",
+                "outputPath": "dist/executables"
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["apps/pimp-my-stocks-desktop/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/apps/pimp-my-stocks-desktop"],
+            "options": {
+                "jestConfig": "apps/pimp-my-stocks-desktop/jest.config.js",
+                "passWithNoTests": true
+            }
         }
-      }
-    },
-    "serve": {
-      "executor": "nx-electron:execute",
-      "options": {
-        "buildTarget": "pimp-my-stocks-desktop:build"
-      }
-    },
-    "package": {
-      "executor": "nx-electron:package",
-      "options": {
-        "name": "pimp-my-stocks-desktop",
-        "frontendProject": "pimp-my-stocks",
-        "outputPath": "dist/packages",
-        "prepackageOnly": true
-      }
-    },
-    "make": {
-      "executor": "nx-electron:make",
-      "options": {
-        "name": "pimp-my-stocks-desktop",
-        "frontendProject": "pimp-my-stocks",
-        "outputPath": "dist/executables"
-      }
-    },
-    "lint": {
-      "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
-      "options": {
-        "lintFilePatterns": [
-          "apps/pimp-my-stocks-desktop/**/*.ts"
-        ]
-      }
-    },
-    "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/pimp-my-stocks-desktop"
-      ],
-      "options": {
-        "jestConfig": "apps/pimp-my-stocks-desktop/jest.config.js",
-        "passWithNoTests": true
-      }
     }
-  }
 }

@@ -1,0 +1,23 @@
+{
+    "projectType": "library",
+    "root": "libs/commons",
+    "sourceRoot": "libs/commons/src",
+    "prefix": "sic",
+    "targets": {
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/libs/commons"],
+            "options": {
+                "jestConfig": "libs/commons/jest.config.js",
+                "passWithNoTests": true
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "options": {
+                "lintFilePatterns": ["libs/commons/src/**/*.ts", "libs/commons/src/**/*.html"]
+            }
+        }
+    },
+    "tags": []
+}

@@ -10,25 +10,23 @@ import {
     HostListener,
     OnDestroy,
 } from '@angular/core';
-import { ChartResultArrayDto } from '@sic/api-interfaces/models';
-import {
-    BaseIndicator,
-    IndicatorTransformResult,
-    RelativeStrengthIndexIndicator,
-} from '@sic/indicator';
 import { MatDialog } from '@angular/material/dialog';
+import { ChartResultArrayDto } from '@core/api/models/chart-result-array-dto';
+import { IndicatorTransformResult } from '@core/models/indicator/indicator-transform-result';
+import { Condition } from '@core/services/conditions/condition';
+import { BaseIndicator } from '@core/services/indicator/indicator';
+import { union } from '@sic/commons';
+import {DataZoomOption} from "echarts/types/src/component/dataZoom/DataZoomModel";
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 import {
     EditConfigurationResult,
     EditIndicatorsDialogComponent,
 } from '../edit-indicators-dialog/edit-indicators-dialog.component';
-import { Condition, EqualityType } from '@sic/condition';
 import { FormBuilder } from '@angular/forms';
 import * as echarts from 'echarts';
 import { ChartPanel } from '../../models/chart-panel';
 import { DateTime } from 'luxon';
-import { union } from '@sic/core';
 
 @Component({
     selector: 'sic-formula-chart',
@@ -72,11 +70,9 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
 
     @Output() addClicked: EventEmitter<void> = new EventEmitter<void>();
     @Output() deleteClicked: EventEmitter<void> = new EventEmitter<void>();
-    @Output() mouseHover: EventEmitter<MouseEvent> =
-        new EventEmitter<MouseEvent>();
+    @Output() mouseHover: EventEmitter<MouseEvent> = new EventEmitter<MouseEvent>();
     @Output() mouseLeave: EventEmitter<void> = new EventEmitter<void>();
-    @Output() zoomChange: EventEmitter<echarts.SliderDataZoomEvent> =
-        new EventEmitter<echarts.SliderDataZoomEvent>();
+    @Output() zoomChange: EventEmitter<echarts.SliderDataZoomEvent> = new EventEmitter<echarts.SliderDataZoomEvent>();
 
     private chart: echarts.ECharts | null = null;
 
@@ -109,20 +105,17 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
         const promises: Promise<IndicatorTransformResult>[] = [];
 
         for (const indicator of this.panel.indicators) {
-            promises.push(indicator.transform(this.chartResult));
+            promises.push(indicator.transform(this.chartResult.quotes, this.chartResult.meta.currency));
         }
 
         const results: IndicatorTransformResult[] = await Promise.all(promises);
 
         // Add all y axis
-        const yAxis: echarts.EChartOption.YAxis[] = [];
+        const yAxis: any[] = [];
         for (const result of results) {
             if (result.yAxis !== undefined) {
                 // Add this axis if not already added
-                if (
-                    yAxis.find((axis) => axis.id === result.yAxis?.id) ===
-                    undefined
-                ) {
+                if (yAxis.find((axis) => axis.id === result.yAxis?.id) === undefined) {
                     yAxis.push(result.yAxis);
                 }
             }
@@ -130,10 +123,8 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
 
         // Add all datasets
 
-        const datasetSources: (number | string | null)[][] = [
-            ['Date', ...this.chartResult.quotes.map((s) => s.date)],
-        ];
-        const series: echarts.EChartOption.Series[] = [];
+        const datasetSources: (number | string | null)[][] = [['Date', ...this.chartResult.quotes.map((s) => s.date)]];
+        const series: any[] = [];
 
         for (const result of results) {
             const useAxis = yAxis.find((axis) => axis.id === result.yAxisId);
@@ -154,14 +145,10 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
                 const conditionPromises: Promise<Set<number>>[] = [];
 
                 for (const condition of this.conditions) {
-                    conditionPromises.push(
-                        condition.evaluate(this.chartResult)
-                    );
+                    conditionPromises.push(condition.evaluate(this.chartResult?.quotes));
                 }
 
-                const conditionResults: Set<number>[] = await Promise.all(
-                    conditionPromises
-                );
+                const conditionResults: Set<number>[] = await Promise.all(conditionPromises);
                 const conditionResult: Set<number> = union(conditionResults);
 
                 const points: any[] = [];
@@ -195,9 +182,7 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
         }
 
         // Initialize the echarts instance
-        const myChart: echarts.ECharts = echarts.init(
-            this.chartContainer.nativeElement
-        );
+        const myChart: echarts.ECharts = echarts.init(this.chartContainer.nativeElement);
 
         myChart.getZr().on('mousemove', (params: { event: MouseEvent }) => {
             this.mouseHover.emit(params.event);
@@ -207,20 +192,11 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
             this.mouseLeave.emit();
         });
 
-        myChart.on(
-            'datazoom',
-            (
-                params:
-                    | echarts.SliderDataZoomEvent
-                    | echarts.InsideDataZoomEvent
-            ) => {
-                const sliderEvent: echarts.SliderDataZoomEvent =
-                    params.batch !== undefined
-                        ? params.batch[0]
-                        : (params as echarts.SliderDataZoomEvent);
-                this.zoomChange.emit(sliderEvent);
-            }
-        );
+        myChart.on('datazoom', (params: any) => {
+            const sliderEvent: echarts.SliderDataZoomEvent =
+                params.batch !== undefined ? params.batch[0] : (params as echarts.SliderDataZoomEvent);
+            this.zoomChange.emit(sliderEvent);
+        });
 
         // Draw the chart
         myChart.setOption({
@@ -246,9 +222,7 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
                     type: 'category',
                     axisLabel: {
                         formatter: function (value: string) {
-                            return DateTime.fromISO(value)
-                                .setLocale('fr-FR')
-                                .toLocaleString();
+                            return DateTime.fromISO(value).setLocale('fr-FR').toLocaleString();
                         },
                     },
                 },
@@ -278,16 +252,14 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
             width: '80%',
         });
 
-        dialogRef
-            .afterClosed()
-            .subscribe((result: BaseIndicator[] | undefined) => {
-                if (result === undefined) {
-                    return;
-                }
+        dialogRef.afterClosed().subscribe((result: BaseIndicator[] | undefined) => {
+            if (result === undefined) {
+                return;
+            }
 
-                this.panel.indicators = [...this.panel.indicators, ...result];
-                this.redrawChart();
-            });
+            this.panel.indicators = [...this.panel.indicators, ...result];
+            this.redrawChart();
+        });
     }
 
     openRemoveDialog(): void {
@@ -296,18 +268,14 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
             data: this.panel.indicators,
         });
 
-        dialogRef
-            .afterClosed()
-            .subscribe((result: BaseIndicator[] | undefined) => {
-                if (result === undefined) {
-                    return;
-                }
+        dialogRef.afterClosed().subscribe((result: BaseIndicator[] | undefined) => {
+            if (result === undefined) {
+                return;
+            }
 
-                this.panel.indicators = this.panel.indicators.filter(
-                    (i) => !result.includes(i)
-                );
-                this.redrawChart();
-            });
+            this.panel.indicators = this.panel.indicators.filter((i) => !result.includes(i));
+            this.redrawChart();
+        });
     }
 
     openEditDialog(): void {
@@ -317,32 +285,23 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
             data: this.panel.indicators,
         });
 
-        dialogRef
-            .afterClosed()
-            .subscribe((result: EditConfigurationResult[] | undefined) => {
-                if (result === undefined) {
-                    return;
+        dialogRef.afterClosed().subscribe((result: EditConfigurationResult[] | undefined) => {
+            if (result === undefined) {
+                return;
+            }
+
+            for (const configurationResult of result) {
+                const indicator = this.panel.indicators.find((i) => i === configurationResult.indicator);
+
+                if (indicator === undefined || indicator.configurator === null) {
+                    continue;
                 }
 
-                for (const configurationResult of result) {
-                    const indicator = this.panel.indicators.find(
-                        (i) => i === configurationResult.indicator
-                    );
+                indicator.configurator.updateConfiguration(configurationResult.configuration);
+            }
 
-                    if (
-                        indicator === undefined ||
-                        indicator.configurator === null
-                    ) {
-                        continue;
-                    }
-
-                    indicator.configurator.updateConfiguration(
-                        configurationResult.configuration
-                    );
-                }
-
-                this.redrawChart();
-            });
+            this.redrawChart();
+        });
     }
 
     public showTooltip(event: MouseEvent) {
@@ -360,13 +319,9 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
     }
 
     public zoom(zoom: echarts.SliderDataZoomEvent) {
-        const currentZoom: echarts.EChartOption.DataZoom | undefined =
-            this.chart?.getOption().dataZoom?.[0];
+        const currentZoom: DataZoomOption | undefined = (this.chart?.getOption()?.['dataZoom'] as any)?.[0];
 
-        if (
-            currentZoom === undefined ||
-            (currentZoom.start === zoom.start && currentZoom.end === zoom.end)
-        ) {
+        if (currentZoom === undefined || (currentZoom.start === zoom.start && currentZoom.end === zoom.end)) {
             return;
         }
 

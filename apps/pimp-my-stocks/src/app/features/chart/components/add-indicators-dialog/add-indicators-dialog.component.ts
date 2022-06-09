@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BaseIndicator, IndicatorService } from '@sic/indicator';
-import { notUndefined } from '@sic/core';
+import { IndicatorService } from '@core/services/indicator.service';
+import {BaseIndicator} from "@core/services/indicator/indicator";
+import { notUndefined } from '@sic/commons';
 
 @Component({
     templateUrl: './add-indicators-dialog.component.html',
@@ -18,9 +19,7 @@ export class AddIndicatorDialogComponent {
         public dialogRef: MatDialogRef<AddIndicatorDialogComponent>
     ) {
         this.selectedIndicatorsControl = this.fb.array(
-            this.indicatorService.flattenedIndicators.map(
-                () => new FormControl()
-            )
+            this.indicatorService.flattenedIndicators.map(() => new FormControl())
         );
     }
 

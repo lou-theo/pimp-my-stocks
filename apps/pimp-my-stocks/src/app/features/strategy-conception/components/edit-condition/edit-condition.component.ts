@@ -14,18 +14,14 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
+import {Condition} from "@core/services/conditions/condition";
+import {IndicatorService} from "@core/services/indicator.service";
+import {BaseIndicator, Indicator} from "@core/services/indicator/indicator";
 import {
     EditConfigurationResult,
     EditIndicatorsDialogComponent,
 } from '@features/chart/components/edit-indicators-dialog/edit-indicators-dialog.component';
-import {
-    AggregationType,
-    AggregationTypeLabelMapping,
-    Condition,
-    EqualityType,
-    EqualityTypeLabelMapping,
-} from '@sic/condition';
-import { BaseIndicator, Indicator, IndicatorService } from '@sic/indicator';
+import {AggregationType, AggregationTypeLabelMapping, EqualityType, EqualityTypeLabelMapping} from "@sic/commons";
 import { Subscription } from 'rxjs';
 
 type ConditionForm = {
