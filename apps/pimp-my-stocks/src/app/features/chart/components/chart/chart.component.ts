@@ -41,7 +41,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     @Input()
-    conditions: Condition[] = [];
+    entryConditions: Condition[] = [];
+    @Input()
+    exitConditions: Condition[] = [];
 
     public intervalControl: FormControl = new FormControl('1mo' as ChartInterval);
     public startDateControl: FormControl = new FormControl(

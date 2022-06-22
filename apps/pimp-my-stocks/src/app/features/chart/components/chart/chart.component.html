@@ -1,27 +1,15 @@
 <div fxLayout="column" fxLayoutAlign="start start">
     <mat-form-field appearance="fill">
         <mat-label>Start date</mat-label>
-        <input
-            matInput
-            [matDatepicker]="picker"
-            [formControl]="startDateControl"
-        />
+        <input matInput [matDatepicker]="picker" [formControl]="startDateControl" />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
 
-        <mat-error *ngIf="startDateControl.hasError('isAfter')"
-            >Start date cannot be after today.</mat-error
-        >
+        <mat-error *ngIf="startDateControl.hasError('isAfter')">Start date cannot be after today.</mat-error>
     </mat-form-field>
 
-    <mat-button-toggle-group
-        name="interval"
-        aria-label="Chart Interval"
-        [formControl]="intervalControl"
-    >
-        <mat-button-toggle
-            *ngFor="let interval of CHART_INTERVALS"
-            [value]="interval"
+    <mat-button-toggle-group name="interval" aria-label="Chart Interval" [formControl]="intervalControl">
+        <mat-button-toggle *ngFor="let interval of CHART_INTERVALS" [value]="interval"
             ><span class="mat-small">{{ interval }}</span></mat-button-toggle
         >
     </mat-button-toggle-group>
@@ -39,7 +27,8 @@
                     [chartResult]="chartResult$ | async"
                     [panel]="panel"
                     [canDelete]="panels.length > 1"
-                    [conditions]="conditions"
+                    [entryConditions]="entryConditions"
+                    [exitConditions]="exitConditions"
                     (addClicked)="addPanel(panel)"
                     (deleteClicked)="removePanel(panel)"
                     (mouseHover)="onMouseHover($event)"
@@ -51,12 +40,8 @@
         </div>
 
         <ng-template #noData>
-            <p *ngIf="(chartError$ | async) === null" class="no-data">
-                No data.
-            </p>
-            <mat-error *ngIf="(chartError$ | async) !== null">{{
-                chartError$ | async
-            }}</mat-error>
+            <p *ngIf="(chartError$ | async) === null" class="no-data">No data.</p>
+            <mat-error *ngIf="(chartError$ | async) !== null">{{ chartError$ | async }}</mat-error>
         </ng-template>
     </ng-template>
 </mat-card>

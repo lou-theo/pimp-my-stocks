@@ -9,6 +9,8 @@ import {
     EventEmitter,
     HostListener,
     OnDestroy,
+    OnChanges,
+    SimpleChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ChartResultArrayDto } from '@core/api/models/chart-result-array-dto';
@@ -16,7 +18,7 @@ import { IndicatorTransformResult } from '@core/models/indicator/indicator-trans
 import { Condition } from '@core/services/conditions/condition';
 import { BaseIndicator } from '@core/services/indicator/indicator';
 import { union } from '@sic/commons';
-import {DataZoomOption} from "echarts/types/src/component/dataZoom/DataZoomModel";
+import { DataZoomOption } from 'echarts/types/src/component/dataZoom/DataZoomModel';
 import { AddIndicatorDialogComponent } from '../add-indicators-dialog/add-indicators-dialog.component';
 import { RemoveIndicatorsDialogComponent } from '../remove-indicators-dialog/remove-indicators-dialog.component';
 import {
@@ -34,37 +36,20 @@ import { DateTime } from 'luxon';
     styleUrls: ['./formula-chart.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormulaChartComponent implements AfterViewInit, OnDestroy {
+export class FormulaChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     @ViewChild('chart') chartContainer?: ElementRef<HTMLDivElement>;
 
-    private _panel: ChartPanel = new ChartPanel(0, []);
     @Input()
-    set panel(value: ChartPanel) {
-        this._panel = value;
-        this.redrawChart();
-    }
-    get panel(): ChartPanel {
-        return this._panel;
-    }
+    public panel: ChartPanel = new ChartPanel(0, []);
 
-    private _chartResult: ChartResultArrayDto | null = null;
-    @Input() set chartResult(value: ChartResultArrayDto | null) {
-        this._chartResult = value;
-        this.redrawChart();
-    }
-    get chartResult(): ChartResultArrayDto | null {
-        return this._chartResult;
-    }
-
-    private _conditions: Condition[] = [];
     @Input()
-    set conditions(value: Condition[]) {
-        this._conditions = value;
-        this.redrawChart();
-    }
-    get conditions(): Condition[] {
-        return this._conditions;
-    }
+    public chartResult: ChartResultArrayDto | null = null;
+
+    @Input()
+    public entryConditions: Condition[] = [];
+
+    @Input()
+    public exitConditions: Condition[] = [];
 
     @Input() canDelete = true;
 
@@ -76,10 +61,32 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
 
     private chart: echarts.ECharts | null = null;
 
+    private readonly listenedFields: (keyof FormulaChartComponent)[] = [
+        'panel',
+        'chartResult',
+        'entryConditions',
+        'exitConditions',
+    ];
+
     constructor(public dialog: MatDialog, public readonly fb: FormBuilder) {}
 
     ngAfterViewInit(): void {
         this.redrawChart();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        let updateChart = false;
+
+        for (const field of this.listenedFields) {
+            if (changes[field]) {
+                updateChart = true;
+                break;
+            }
+        }
+
+        if (updateChart) {
+            this.redrawChart();
+        }
     }
 
     private async redrawChart(): Promise<void> {
@@ -141,39 +148,51 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
                 return;
             }
 
-            if (result.identifier === 'price' && this.conditions.length !== 0) {
-                const conditionPromises: Promise<Set<number>>[] = [];
-
-                for (const condition of this.conditions) {
-                    conditionPromises.push(condition.evaluate(this.chartResult?.quotes));
-                }
-
-                const conditionResults: Set<number>[] = await Promise.all(conditionPromises);
-                const conditionResult: Set<number> = union(conditionResults);
-
+            if (result.identifier === 'price' && this.entryConditions.length !== 0) {
                 const points: any[] = [];
 
-                // TODO: Get coord from the condition result
-                conditionResult.forEach((index) => {
-                    points.push({
-                        name: 'test',
-                        symbol: 'arrow',
-                        symbolSize: 10,
-                        coord: [index, this.chartResult?.quotes[index].close],
-                        itemStyle: {
-                            color: 'green',
-                        },
+                if (this.entryConditions.length !== 0) {
+                    const entryConditionsResult: Set<number> = await this.getConditionsResult(this.entryConditions);
+                    // TODO: Get coord from the condition result
+                    entryConditionsResult.forEach((index) => {
+                        points.push({
+                            name: 'test',
+                            symbol: 'arrow',
+                            symbolSize: 10,
+                            coord: [index, this.chartResult?.quotes[index].close],
+                            itemStyle: {
+                                color: 'green',
+                            },
+                        });
                     });
-                });
+                }
 
-                result.series.markPoint = {
-                    label: {
-                        formatter: (params: { name: string }) => {
-                            return '';
+                if (this.exitConditions.length !== 0) {
+                    const exitConditionsResult: Set<number> = await this.getConditionsResult(this.exitConditions);
+                    // TODO: Get coord from the condition result
+                    exitConditionsResult.forEach((index) => {
+                        points.push({
+                            name: 'test',
+                            symbol: 'arrow',
+                            symbolSize: 10,
+                            coord: [index, this.chartResult?.quotes[index].close],
+                            itemStyle: {
+                                color: 'red',
+                            },
+                        });
+                    });
+                }
+
+                if (points.length !== 0) {
+                    result.series.markPoint = {
+                        label: {
+                            formatter: (params: { name: string }) => {
+                                return '';
+                            },
                         },
-                    },
-                    data: points,
-                };
+                        data: points,
+                    };
+                }
             }
 
             datasetSources.push([result.label, ...result.dataset]);
@@ -240,6 +259,21 @@ export class FormulaChartComponent implements AfterViewInit, OnDestroy {
         });
 
         this.chart = myChart;
+    }
+
+    private async getConditionsResult(conditions: Condition[]): Promise<Set<number>> {
+        if (this.chartResult === null) {
+            return new Set();
+        }
+
+        const conditionPromises: Promise<Set<number>>[] = [];
+
+        for (const condition of conditions) {
+            conditionPromises.push(condition.evaluate(this.chartResult.quotes));
+        }
+
+        const conditionResults: Set<number>[] = await Promise.all(conditionPromises);
+        return union(conditionResults);
     }
 
     @HostListener('window:resize')

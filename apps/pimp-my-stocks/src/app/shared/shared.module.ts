@@ -23,6 +23,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTabsModule } from '@angular/material/tabs';
 import { QuoteSearchComponent } from './components/quote-search/quote-search.component';
 
 const materialModules = [
@@ -46,19 +47,12 @@ const materialModules = [
     MatCheckboxModule,
     MatListModule,
     MatSelectModule,
+    MatTabsModule,
 ];
 
 @NgModule({
-    declarations: [
-        QuoteSearchComponent,
-    ],
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        ...materialModules,
-    ],
+    declarations: [QuoteSearchComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, FlexLayoutModule, ...materialModules],
     exports: [
         // Angular modules
         CommonModule,

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Condition} from "@core/services/conditions/condition";
+import { Condition } from '@core/services/conditions/condition';
 
 @Component({
     templateUrl: './strategy-conception.component.html',
@@ -8,8 +8,14 @@ import {Condition} from "@core/services/conditions/condition";
 export class StrategyConceptionComponent {
     public currentSymbol: string | null = null;
 
-    conditions: Condition[] = [];
-    onConditionUpdated(condition: Condition): void {
-        this.conditions = [condition];
+    public entryConditions: Condition[] = [];
+    public exitConditions: Condition[] = [];
+
+    onEntryConditionUpdated(condition: Condition): void {
+        this.entryConditions = [condition];
+    }
+
+    onExitConditionUpdated(condition: Condition): void {
+        this.exitConditions = [condition];
     }
 }
