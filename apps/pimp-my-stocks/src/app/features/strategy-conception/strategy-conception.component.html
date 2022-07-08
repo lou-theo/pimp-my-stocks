@@ -1,19 +1,31 @@
-<div fxLayout="column">
+<div fxLayout="row">
     <sic-quote-search fxFlex="1 0 auto" (symbolSelected)="currentSymbol = $event"></sic-quote-search>
+</div>
+
+<div fxLayout="row" fxLayoutGap="20px">
     <sic-chart
         fxFlex="70%"
         [symbol]="currentSymbol"
         [entryConditions]="entryConditions"
         [exitConditions]="exitConditions"
     ></sic-chart>
-</div>
-<div class="conditions" fxLayout="row">
-    <mat-tab-group>
-        <mat-tab label="Conditions d'entrée">
-            <sic-edit-condition (conditionUpdated)="onEntryConditionUpdated($event)"></sic-edit-condition>
-        </mat-tab>
-        <mat-tab label="Conditions de sortie">
-            <sic-edit-condition (conditionUpdated)="onExitConditionUpdated($event)"></sic-edit-condition>
-        </mat-tab>
-    </mat-tab-group>
+
+    <mat-card fxFlex="30%">
+        <mat-tab-group>
+            <mat-tab label="Conditions d'entrée">
+                <sic-edit-condition (conditionUpdated)="onEntryConditionUpdated($event)"></sic-edit-condition>
+            </mat-tab>
+            <mat-tab label="Conditions de sortie">
+                <sic-edit-condition (conditionUpdated)="onExitConditionUpdated($event)"></sic-edit-condition>
+            </mat-tab>
+        </mat-tab-group>
+        <mat-tree-node *matTreeNodeDef="let node; when" matTreeNodePadding>
+            <button mat-icon-button disabled></button>
+            <mat-form-field appearance="fill">
+                <mat-label>New item...</mat-label>
+                <input matInput #itemValue placeholder="Ex. Lettuce" />
+            </mat-form-field>
+            <button mat-button (click)="saveNode(node, itemValue.value)">Save</button>
+        </mat-tree-node>
+    </mat-card>
 </div>

@@ -1,7 +1,7 @@
-import {ChartDailyQuoteModel, ComparisonType, intersection, union} from "@sic/commons";
+import { ChartDailyQuoteModel, ComparisonType, intersection, union } from '@sic/commons';
 import { Condition } from './condition';
 
-export class ConditionGroup {
+export class ConditionGroup implements Condition {
     constructor(public comparisonType: ComparisonType, public conditions: Condition[]) {}
 
     public async evaluate(dailyQuotes: ChartDailyQuoteModel[]): Promise<Set<number>> {
