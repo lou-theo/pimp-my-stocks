@@ -1,25 +1,25 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild,} from '@angular/core';
-import {QuoteSummaryDto} from "@core/api/models/quote-summary-dto";
+import { AfterViewInit, Component, ElementRef, HostListener, Input, OnDestroy, ViewChild } from '@angular/core';
+import { QuoteSummaryDto } from '@core/api/models/quote-summary-dto';
+import { roundDecimal } from '@sic/commons';
+import * as echarts from 'echarts';
 
 type ChartAndCanvas = {
     label: string;
     getLabels: (summary: QuoteSummaryDto) => string[];
     getValues: (summary: QuoteSummaryDto) => number[];
     chart: echarts.ECharts | null;
-    canvas: ElementRef<HTMLCanvasElement> | undefined;
+    canvas: ElementRef<HTMLDivElement> | undefined;
 };
 
 @Component({
     selector: 'sic-quote-etf-details',
     templateUrl: './quote-info-etf.component.html',
     styleUrls: ['./quote-info-etf.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QuoteInfoEtfComponent implements AfterViewInit {
-    @ViewChild('typeChart') typeChartCanvas?: ElementRef<HTMLCanvasElement>;
-    @ViewChild('sectorChart') sectorChartCanvas?: ElementRef<HTMLCanvasElement>;
-    @ViewChild('holdingsChart')
-    holdingsChartCanvas?: ElementRef<HTMLCanvasElement>;
+export class QuoteInfoEtfComponent implements AfterViewInit, OnDestroy {
+    @ViewChild('typeChart') typeChartCanvas?: ElementRef<HTMLDivElement>;
+    @ViewChild('sectorChart') sectorChartCanvas?: ElementRef<HTMLDivElement>;
+    @ViewChild('holdingsChart') holdingsChartCanvas?: ElementRef<HTMLDivElement>;
 
     @Input() summary: QuoteSummaryDto = {};
 
@@ -27,7 +27,14 @@ export class QuoteInfoEtfComponent implements AfterViewInit {
 
     private charts: ChartAndCanvas[] = [];
 
-    ngAfterViewInit(): void {
+    @HostListener('window:resize')
+    private onResize() {
+        for (const chart of this.charts) {
+            chart.chart?.resize();
+        }
+    }
+
+    public ngAfterViewInit(): void {
         this.charts.push({
             canvas: this.typeChartCanvas,
             chart: null,
@@ -49,28 +56,18 @@ export class QuoteInfoEtfComponent implements AfterViewInit {
             chart: null,
             label: 'Secteurs',
             getLabels: (s) => {
-                const labels =
-                    s.topHoldings?.sectorWeightings.map(
-                        (s) => Object.keys(s)[0]
-                    ) ?? [];
+                const labels = s.topHoldings?.sectorWeightings.map((s) => Object.keys(s)[0]) ?? [];
                 labels.push('Autres');
                 return labels;
             },
             getValues: (s) => {
-                const result: number[] =
-                    s.topHoldings?.sectorWeightings.map(
-                        (s) => Object.values(s)[0] * 100
-                    ) ?? [];
+                const result: number[] = s.topHoldings?.sectorWeightings.map((s) => Object.values(s)[0] * 100) ?? [];
                 const other: number = 100 - result.reduce((p, c) => p + c, 0);
                 result.push(other);
                 return result;
             },
         });
 
-        this.topHoldingsPercent =
-            this.summary.topHoldings?.holdings
-                .map((s) => s.holdingPercent * 100)
-                .reduce((p, c) => p + c, 0) ?? 0;
         this.charts.push({
             canvas: this.holdingsChartCanvas,
             chart: null,
@@ -79,11 +76,13 @@ export class QuoteInfoEtfComponent implements AfterViewInit {
                 return s.topHoldings?.holdings.map((s) => s.holdingName) ?? [];
             },
             getValues: (s) => {
-                return s.topHoldings?.holdings.map(
-                    (s) => s.holdingPercent * 100
-                ) ?? [];
+                return s.topHoldings?.holdings.map((s) => s.holdingPercent * 100) ?? [];
             },
         });
+
+        this.topHoldingsPercent = roundDecimal(
+            this.summary.topHoldings?.holdings.map((s) => s.holdingPercent * 100).reduce((p, c) => p + c, 0) ?? 0
+        );
 
         this.redrawCharts();
     }
@@ -99,58 +98,39 @@ export class QuoteInfoEtfComponent implements AfterViewInit {
             return;
         }
 
-        const ctx: CanvasRenderingContext2D | null =
-            chart.canvas.nativeElement.getContext('2d');
-
-        if (ctx === null) {
-            return;
-        }
-
-        // TODO: update this to use echarts
-        /*
         // Reset the chart
         if (chart.chart != null) {
-            chart.chart.destroy();
+            chart.chart.dispose();
             chart.chart = null;
         }
+        const chartValues: number[] = chart.getValues(this.summary);
 
-        // Draw chart on the canvas
-        const data: ChartData<
-            keyof ChartTypeRegistry,
-            (number | null)[],
-            string
-        > = {
-            labels: chart.getLabels(this.summary),
-            datasets: [
+        chart.chart = echarts.init(chart.canvas.nativeElement);
+        chart.chart.setOption({
+            legend: {
+                show: false,
+            },
+            tooltip: {
+                trigger: 'item',
+            },
+            series: [
                 {
-                    label: chart.label,
-                    data: chart.getValues(this.summary),
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)',
-                    ],
-                    hoverOffset: 4,
+                    type: 'pie',
+                    roseType: 'area',
+                    itemStyle: {
+                        borderRadius: 8,
+                    },
+                    data: chart.getLabels(this.summary).map((label, index) => {
+                        return { name: label, value: roundDecimal(chartValues[index]) };
+                    }),
                 },
             ],
-        };
+        });
+    }
 
-        const config: ChartConfiguration<
-            keyof ChartTypeRegistry,
-            (number | null)[],
-            string
-        > = {
-            type: 'doughnut',
-            data: data,
-            options: {
-                plugins: {
-                    legend: {
-                        display: false,
-                    },
-                },
-            },
-        };
-
-        chart.chart = new Chart(ctx, config);*/
+    ngOnDestroy(): void {
+        for (const chart of this.charts) {
+            chart.chart?.dispose();
+        }
     }
 }

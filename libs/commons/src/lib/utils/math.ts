@@ -18,3 +18,8 @@ export function median(values: number[]): number {
         return sorted[halfLength];
     }
 }
+
+export function roundDecimal(value: number, decimalPrecision: number = 2) {
+    return Math.round((value + Number.EPSILON) * (10 ** decimalPrecision)) / (10 ** decimalPrecision)
+
+}
